@@ -1,26 +1,10 @@
----
-const { projects, publications } = Astro.props;
----
-
-<canvas
-  id="heroCanvas"
-  class="relative z-0 inset-0 h-full w-full pointer-events-auto"></canvas>
-
-<a id="linkOverlay"></a>
-
-<script define:vars={{ projects, publications }}>
+export function initHeroCanvas({ projects, publications }) {
+  /* -------------------------------------------------------
+   * 1. DOM + Canvas Setup
+   * ----------------------------------------------------- */
   const canvas = document.getElementById("heroCanvas");
   const linkOverlay = document.getElementById("linkOverlay");
   const ctx = canvas.getContext("2d");
-
-  const projectData = projects || [];
-  const publicationData = publications || [];
-  // console.log("projectData:", projectData);
-  // console.log("publicationData:", publicationData);
-
-  let nodes = [];
-  let activeProject = null;
-  const NODE_COUNT = 50;
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -29,25 +13,61 @@ const { projects, publications } = Astro.props;
   resize();
   window.addEventListener("resize", resize);
 
+  /* -------------------------------------------------------
+   * 2. State & Constants
+   * ----------------------------------------------------- */
+  const projectData = projects || [];
+  const publicationData = publications || [];
+  const NODE_COUNT = 50;
+
+  let nodes = [];
+  let activeProject = null;
+
+  /* -------------------------------------------------------
+   * 3. Utility: Ambient Node Management
+   * ----------------------------------------------------- */
+  function createAmbientNode() {
+    nodes.push(new Node(null, "ambient"));
+  }
+
+  function removeRandomAmbientNode() {
+    const ambientNodes = nodes.filter(n => n.type === "ambient" && !n.dying);
+    if (ambientNodes.length === 0) return;
+
+    const victim = ambientNodes[Math.floor(Math.random() * ambientNodes.length)];
+    victim.dying = true; // fade-out instead of instant removal
+  }
+
+  /* -------------------------------------------------------
+   * 4. Node Class
+   * ----------------------------------------------------- */
   class Node {
     constructor(data, type = "ambient") {
       this.type = type;
+
+      // position & size
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
       this.r = data ? 50 : 4 + Math.random() * 10;
       this.baseR = this.r;
       this.targetR = this.r;
 
+      // animation tuning
       this.expandSpeed = data ? 0.08 : 0.015;
       this.revealThreshold = data ? 1.2 : 1.4;
 
+      // movement
       this.vx = (Math.random() - 0.5) * 0.4;
       this.vy = (Math.random() - 0.5) * 0.4;
+
+      // interaction
       this.hovered = false;
 
+      // fade-out
       this.dying = false;
       this.opacity = 1;
 
+      // images for project/publication nodes
       if (data) {
         this.href = data.href;
         this.img = new Image();
@@ -63,10 +83,11 @@ const { projects, publications } = Astro.props;
     }
 
     update() {
+      /* movement */
       this.x += this.vx;
       this.y += this.vy;
 
-      // bounce with radius
+      // bounce
       if (this.x - this.r <= 0) {
         this.x = this.r;
         this.vx = Math.abs(this.vx);
@@ -83,61 +104,43 @@ const { projects, publications } = Astro.props;
         this.vy = -Math.abs(this.vy);
       }
 
-      // smooth radius animation
+      /* smooth radius animation */
       this.r += (this.targetR - this.r) * this.expandSpeed;
 
-      // push away from edges while expanding
+      /* keep hovered nodes from clipping edges */
       if (this.hovered) {
         const push = 0.5;
-
         if (this.x - this.r < 0) this.x = this.r + push;
-        else if (this.x + this.r > canvas.width)
-          this.x = canvas.width - this.r - push;
-
+        if (this.x + this.r > canvas.width) this.x = canvas.width - this.r - push;
         if (this.y - this.r < 0) this.y = this.r + push;
-        else if (this.y + this.r > canvas.height)
-          this.y = canvas.height - this.r - push;
+        if (this.y + this.r > canvas.height) this.y = canvas.height - this.r - push;
       }
 
+      /* fade-out animation */
       if (this.dying) {
-        this.r *= 0.9; // shrink
-        this.opacity *= 0.85; // fade
-
-        if (this.r < 0.5 || this.opacity < 0.05) {
-          this.dead = true; // mark for removal
-        }
+        this.r *= 0.9;
+        this.opacity *= 0.85;
+        if (this.r < 0.5 || this.opacity < 0.05) this.dead = true;
       }
     }
 
     draw() {
       ctx.save();
 
-      let dimmed = false;
+      /* filtering logic */
+      const fm = window.filterMode || { projects: false, publications: false };
       const isProject = this.type === "project";
       const isPublication = this.type === "publication";
-      const fm = window.filterMode || { projects: false, publications: false };
 
-      // filtering logic
-      // CASE 1: no filters → show everything
-      if (!fm.projects && !fm.publications) {
-        dimmed = false;
-      }
-      // CASE 2: projects only
-      else if (fm.projects && !fm.publications) {
-        dimmed = !isProject;
-      }
-      // CASE 3: publications only
-      else if (!fm.projects && fm.publications) {
-        dimmed = !isPublication;
-      }
-      // CASE 4: both → show only project + publication
-      else if (fm.projects && fm.publications) {
-        dimmed = !(isProject || isPublication);
-      }
+      let dimmed = false;
 
+      if (!fm.projects && !fm.publications) dimmed = false;
+      else if (fm.projects && !fm.publications) dimmed = !isProject;
+      else if (!fm.projects && fm.publications) dimmed = !isPublication;
+      else if (fm.projects && fm.publications) dimmed = !(isProject || isPublication);
+
+      /* draw base circle */
       ctx.globalAlpha = this.opacity;
-      ctx.globalAlpha = 1;
-
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
       ctx.closePath();
@@ -146,66 +149,34 @@ const { projects, publications } = Astro.props;
       ctx.fillStyle = dimmed ? "rgba(0,0,0,0.1)" : "black";
       ctx.fill();
 
+      /* reveal image */
       const expandedEnough = this.r > this.baseR * this.revealThreshold;
-
-      if (
-        !dimmed &&
-        this.hovered &&
-        expandedEnough &&
-        this.img &&
-        this.loaded
-      ) {
-        ctx.drawImage(
-          this.img,
-          this.x - this.r,
-          this.y - this.r,
-          this.r * 2,
-          this.r * 2,
-        );
+      if (!dimmed && this.hovered && expandedEnough && this.img && this.loaded) {
+        ctx.drawImage(this.img, this.x - this.r, this.y - this.r, this.r * 2, this.r * 2);
       }
 
       ctx.restore();
     }
   }
 
-  function createAmbientNode() {
-    const n = new Node(null, "ambient");
-    nodes.push(n);
-  }
+  /* -------------------------------------------------------
+   * 5. Initialization: Create Nodes
+   * ----------------------------------------------------- */
+  projectData.forEach(p => nodes.push(new Node(p, "project")));
+  publicationData.forEach(p => nodes.push(new Node(p, "publication")));
+  for (let i = 0; i < NODE_COUNT; i++) nodes.push(new Node(null, "ambient"));
 
-  function removeRandomAmbientNode() {
-    const ambientNodes = nodes.filter((n) => n.type === "ambient");
-    if (ambientNodes.length === 0) return;
-
-    const victim =
-      ambientNodes[Math.floor(Math.random() * ambientNodes.length)];
-    const index = nodes.indexOf(victim);
-    if (index !== -1) nodes.splice(index, 1);
-  }
-
-  // project nodes
-  projectData.forEach((project) => {
-    nodes.push(new Node(project, "project"));
-  });
-
-  // publication nodes
-  publicationData.forEach((pub) => {
-    nodes.push(new Node(pub, "publication"));
-  });
-
-  // ambient nodes
-  for (let i = 0; i < NODE_COUNT; i++) {
-    nodes.push(new Node(null, "ambient"));
-  }
-
-  canvas.addEventListener("mousemove", (e) => {
+  /* -------------------------------------------------------
+   * 6. Event Listeners
+   * ----------------------------------------------------- */
+  canvas.addEventListener("mousemove", e => {
     activeProject = null;
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
-    nodes.forEach((n) => {
+    nodes.forEach(n => {
       const dist = Math.hypot(mx - n.x, my - n.y);
       n.hovered = dist < n.baseR * 2;
       n.targetR = n.hovered ? n.baseR * 3 : n.baseR;
@@ -215,7 +186,6 @@ const { projects, publications } = Astro.props;
 
     if (activeProject) {
       const size = activeProject.r * 2;
-
       linkOverlay.href = activeProject.href;
       linkOverlay.style.left = `${activeProject.x - activeProject.r}px`;
       linkOverlay.style.top = `${activeProject.y - activeProject.r}px`;
@@ -229,12 +199,12 @@ const { projects, publications } = Astro.props;
     }
   });
 
-  canvas.addEventListener("click", (e) => {
+  canvas.addEventListener("click", e => {
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
 
-    nodes.forEach((n) => {
+    nodes.forEach(n => {
       if (n.href) {
         const dist = Math.hypot(mx - n.x, my - n.y);
         if (dist < n.r) window.location.href = n.href;
@@ -242,6 +212,9 @@ const { projects, publications } = Astro.props;
     });
   });
 
+  /* -------------------------------------------------------
+   * 7. Draw Connections
+   * ----------------------------------------------------- */
   function drawConnections() {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
@@ -260,13 +233,18 @@ const { projects, publications } = Astro.props;
     }
   }
 
+  /* -------------------------------------------------------
+   * 8. Animation Loop
+   * ----------------------------------------------------- */
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    nodes.forEach((n) => {
+    nodes.forEach(n => {
       n.update();
       n.draw();
     });
+
+    nodes = nodes.filter(n => !n.dead);
 
     drawConnections();
     requestAnimationFrame(animate);
@@ -274,28 +252,10 @@ const { projects, publications } = Astro.props;
 
   animate();
 
-  // every 2 seconds, randomly add or remove one ambient node
+  /* -------------------------------------------------------
+   * 9. Ambient Randomizer
+   * ----------------------------------------------------- */
   setInterval(() => {
-    const r = Math.random();
-    if (r < 0.5) {
-      createAmbientNode();
-    } else {
-      removeRandomAmbientNode();
-    }
+    Math.random() < 0.5 ? createAmbientNode() : removeRandomAmbientNode();
   }, 2000);
-</script>
-
-<style>
-  canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-  #linkOverlay {
-    position: absolute;
-    display: none;
-    pointer-events: auto;
-    z-index: 10;
-  }
-</style>
+}

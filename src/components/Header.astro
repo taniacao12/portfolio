@@ -58,12 +58,21 @@
       }
     }
 
-    projectsBtn.addEventListener("click", () =>
-      toggle(projectsBtn, "projects"),
-    );
-    publicationsBtn.addEventListener("click", () =>
-      toggle(publicationsBtn, "publications"),
-    );
+    projectsBtn.addEventListener("click", () => {
+      if (window.location.pathname !== "/") {
+        window.location.href = "/?filter=projects";
+      } else {
+        toggle(projectsBtn, "projects");
+      }
+    });
+
+    publicationsBtn.addEventListener("click", () => {
+      if (window.location.pathname !== "/") {
+        window.location.href = "/?filter=publications";
+      } else {
+        toggle(publicationsBtn, "publications");
+      }
+    });
   }
 </script>
 

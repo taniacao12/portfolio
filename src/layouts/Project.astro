@@ -1,15 +1,59 @@
 ---
 import Base from "@layouts/Base.astro";
-const { title, description, coverImage, coverImageAlt } = Astro.props;
+const {
+  title,
+  subtitle,
+  description,
+  coverImage,
+  coverImageAlt,
+  course,
+  courseDescription,
+  instructor,
+  collaborators,
+  date,
+  location,
+} = Astro.props;
 ---
 
 <Base
   title={title}
+  subtitle={subtitle}
   description={description}
   coverImage={coverImage}
   coverImageAlt={coverImageAlt}
+  course={course}
+  courseDescription={courseDescription}
+  instructor={instructor}
+  collaborators={collaborators}
+  date={date}
+  location={location}
 >
-  <h1>{title}</h1>
+  <div
+    class="mx-auto max-w-5xl items-center justify-between p-4 pointer-events-auto"
+  >
+    <div class="flex justify-between items-start w-full">
+      <div class="flex-7 flex-col">
+        <h1>{title}</h1>
+        <h2>{subtitle}</h2>
+        <br />
 
-  <slot />
+        <div set:html={description} />
+      </div>
+
+      <div class="flex-3 text-right">
+        <p>Course \<br />{course}:<br />{courseDescription}</p>
+        <br />
+        <p>Instructor \<br />{instructor}</p>
+        <br />
+        <p>Collaborators \<br />{collaborators}</p>
+        <br />
+        <p>Date \<br />{date}</p>
+        <br />
+        <p>Location \<br />{location}</p>
+      </div>
+    </div>
+    <br />
+
+    <slot />
+  </div>
 </Base>

@@ -1,0 +1,17 @@
+---
+import Project from "@layouts/Project.astro";
+
+export const frontmatter = {
+    title: "Chelsea Timber Library",
+    coverImage: "/favicon.ico",
+    coverImageAlt: "Chelsea Timber Library",
+};
+---
+
+<Project
+    title={frontmatter.title}
+    description="Description"
+    coverImage={frontmatter.coverImage}
+    coverImageAlt={frontmatter.coverImageAlt}
+    date="2024-06-01"
+/>

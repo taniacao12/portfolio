@@ -1,0 +1,43 @@
+---
+import Project from "@layouts/Project.astro";
+
+export const frontmatter = {
+    title: "Garden Central",
+    coverImage: "/favicon.ico",
+    coverImageAlt: "Garden Central",
+};
+---
+
+<Project
+    title={frontmatter.title}
+    subtitle=""
+    description=`<p>
+        Set within the historic shell of St. Mary's Church, this adaptive reuse
+        project blurs the boundaries between residence and commerce. A large plaza
+        welcomes visitors with park-like features, anchoring a spatial sequence
+        that unfolds across four distinct programs: a ground-floor gathering space
+        for markets and concerts, basement workshops for artists and lecturers,
+        upper-level galleries for public art, and a rooftop garden for cultivation
+        and community.
+    </p>
+    <br />
+    <p>
+        Designed to foster a self-sustaining ecosystem, the building invites
+        low-income residents to live, work, and play within a shared environment.
+        Circulation weaves vertically through the core, echoing the branching
+        complexity of nature and encouraging interaction across levels. Apartment
+        units integrate old and new structures, balancing privacy with access to
+        communal courtyards and shared spaces. The architecture becomes a
+        framework for unity—where talent, greenery, and public life converge.
+    </p>`
+    coverImage={frontmatter.coverImage}
+    coverImageAlt={frontmatter.coverImageAlt}
+    course="Architectural Studio IV"
+    courseDescription="Mixed-Use Housing"
+    instructor="Adam Dayem"
+    collaborators="Yi Liu"
+    date="Spring 2021"
+    location="Troy, New York"
+>
+    <p></p>
+</Project>

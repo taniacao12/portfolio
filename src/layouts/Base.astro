@@ -5,9 +5,16 @@ import Footer from "@components/Footer.astro";
 
 interface Props {
   title: string;
+  subtitle: string;
   description: string;
   coverImage: string;
   coverImageAlt: string;
+  course: string;
+  courseDescription: string;
+  instructor: string;
+  collaborators: string;
+  date: string;
+  location: string;
 }
 const { title, description, coverImage, coverImageAlt } = Astro.props;
 ---

@@ -34,9 +34,33 @@ const publications = Object.entries(publicationFiles).map(([path, mod]) => ({
 
 <Base
 	title="Portfolio"
-	description="A series of selected works by Tania Cao."
+	subtitle="A series of selected works by Tania Cao."
+	description=""
 	coverImage={"/favicon.png"}
 	coverImageAlt={"Tania Cao."}
+	course=""
+	courseDescription=""
+	instructor=""
+	collaborators=""
+	date=""
+	location=""
 >
 	<HeroCanvas projects={projects} publications={publications} />
 </Base>
+
+<script>
+	const params = new URLSearchParams(window.location.search);
+	const filter = params.get("filter");
+
+	if (filter === "projects") {
+		window.filterMode.projects = true;
+		document.getElementById("projectsBtn")?.classList.add("nav-active");
+	}
+
+	if (filter === "publications") {
+		window.filterMode.publications = true;
+		document.getElementById("publicationsBtn")?.classList.add("nav-active");
+	}
+
+	history.replaceState({}, "", "/");
+</script>
