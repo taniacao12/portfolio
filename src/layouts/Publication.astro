@@ -1,0 +1,15 @@
+---
+import Base from "@layouts/Base.astro";
+const { title, description, coverImage, coverImageAlt } = Astro.props;
+---
+
+<Base
+  title={title}
+  description={description}
+  coverImage={coverImage}
+  coverImageAlt={coverImageAlt}
+>
+  <h1>{title}</h1>
+
+  <slot />
+</Base>

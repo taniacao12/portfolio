@@ -1,0 +1,75 @@
+<nav class="relative w-full py-4 z-1 pointer-events-none">
+  <div
+    class="flex items-center justify-between max-w-7xl mx-auto px-4 pointer-events-auto"
+  >
+    <!-- Logo -->
+    <a href="/" class="flex items-center px-3 py-2 rounded-md bg-white/50">
+      <img src="/favicon.ico" alt="Tania Cao." class="h-6 w-6" />
+      <span class="ml-2 text-lg font-semibold">Tania Cao.</span>
+    </a>
+
+    <!-- Controls -->
+    <div class="sm:flex space-x-6 text-sm">
+      <button
+        id="projectsBtn"
+        class="px-3 py-2 rounded-md bg-white/50 hover:bg-black hover:text-white focus:outline-none"
+      >
+        Projects
+      </button>
+
+      <button
+        id="publicationsBtn"
+        class="px-3 py-2 rounded-md bg-white/50 hover:bg-black hover:text-white focus:outline-none"
+      >
+        Publications
+      </button>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // @ts-ignore
+  window.filterMode = {
+    projects: false,
+    publications: false,
+  };
+
+  const projectsBtn = document.getElementById(
+    "projectsBtn",
+  )! as HTMLButtonElement;
+  const publicationsBtn = document.getElementById(
+    "publicationsBtn",
+  )! as HTMLButtonElement;
+
+  if (!projectsBtn || !publicationsBtn) {
+    console.error("Filter buttons not found in DOM");
+  } else {
+    function toggle(btn: HTMLButtonElement, key: "projects" | "publications") {
+      const isActive = btn.classList.contains("nav-active");
+
+      if (isActive) {
+        btn.classList.remove("nav-active");
+        // @ts-ignore
+        window.filterMode[key] = false;
+      } else {
+        btn.classList.add("nav-active");
+        // @ts-ignore
+        window.filterMode[key] = true;
+      }
+    }
+
+    projectsBtn.addEventListener("click", () =>
+      toggle(projectsBtn, "projects"),
+    );
+    publicationsBtn.addEventListener("click", () =>
+      toggle(publicationsBtn, "publications"),
+    );
+  }
+</script>
+
+<style>
+  .nav-active {
+    background-color: black !important;
+    color: white !important;
+  }
+</style>

@@ -1,0 +1,16 @@
+---
+import Publication from "@layouts/Publication.astro";
+
+export const frontmatter = {
+    title: "CodeCheck",
+    coverImage: "/favicon.ico",
+    coverImageAlt: "CodeCheck",
+};
+---
+
+<Publication
+    title={frontmatter.title}
+    description="Description"
+    coverImage={frontmatter.coverImage}
+    coverImageAlt={frontmatter.coverImageAlt}
+/>

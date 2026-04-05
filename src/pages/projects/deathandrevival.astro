@@ -1,0 +1,16 @@
+---
+import Project from "@layouts/Project.astro";
+
+export const frontmatter = {
+    title: "Death and Revival",
+    coverImage: "/favicon.ico",
+    coverImageAlt: "Death and Revival",
+};
+---
+
+<Project
+    title={frontmatter.title}
+    description="Description"
+    coverImage={frontmatter.coverImage}
+    coverImageAlt={frontmatter.coverImageAlt}
+/>

@@ -1,17 +1,42 @@
 ---
+import Base from "@layouts/Base.astro";
+import HeroCanvas from "@components/HeroCanvas.astro";
 
+type ProjectModule = {
+	frontmatter: { coverImage: string };
+};
+type PublicationModule = {
+	frontmatter: { coverImage: string };
+};
+
+const projectFiles = import.meta.glob<ProjectModule>(
+	"/src/pages/projects/*.astro",
+	{ eager: true },
+);
+const publicationFiles = import.meta.glob<PublicationModule>(
+	"/src/pages/publications/*.astro",
+	{ eager: true },
+);
+// console.log("projectFiles:", Object.keys(projectFiles));
+// console.log("publicationFiles:", Object.keys(publicationFiles));
+
+const projects = Object.entries(projectFiles).map(([path, mod]) => ({
+	href: path.replace("/src/pages", "").replace(".astro", ""),
+	coverImage: mod.frontmatter.coverImage,
+}));
+const publications = Object.entries(publicationFiles).map(([path, mod]) => ({
+	href: path.replace("/src/pages", "").replace(".astro", ""),
+	coverImage: mod.frontmatter.coverImage,
+}));
+// console.log("projects:", projects);
+// console.log("publications:", publications);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Portfolio | Tania Cao.</title>
-	</head>
-	<body>
-		<h1>Tania Cao.</h1>
-	</body>
-</html>
+<Base
+	title="Portfolio"
+	description="A series of selected works by Tania Cao."
+	coverImage={"/favicon.png"}
+	coverImageAlt={"Tania Cao."}
+>
+	<HeroCanvas projects={projects} publications={publications} />
+</Base>
