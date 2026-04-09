@@ -3,14 +3,23 @@ import Project from "@layouts/Project.astro";
 
 export const frontmatter = {
     title: "Death and Revival",
-    coverImage: "/favicon.ico",
+    subtitle:"A Study of Bodies, Cities, and Cycles of Change",
+    coverImage: "/deathandrevival/Church 2.jpg",
     coverImageAlt: "Death and Revival",
 };
 ---
 
 <Project
     title={frontmatter.title}
-    subtitle=""
+    subtitle={frontmatter.subtitle}
+    coverImage={frontmatter.coverImage}
+    coverImageAlt={frontmatter.coverImageAlt}
+    course="Architectural Studio VI"
+    courseDescription="Radicle Roots"
+    instructor="Christianna Bennett"
+    collaborators="Marinie Ben"
+    date="Fall 2022"
+    location="Rome, Italy"
     description=`<p>
             Renaissance architecture reflects an idealized vision of the human
             body—proportioned, perfected, and measured against classical notions of
@@ -41,14 +50,6 @@ export const frontmatter = {
             perfection is not a fixed condition, but a cycle of decline, adaptation,
             and renewal.
         </p>`
-    coverImage={frontmatter.coverImage}
-    coverImageAlt={frontmatter.coverImageAlt}
-    course="Architectural Studio VI"
-    courseDescription="Radicle Roots"
-    instructor="Christianna Bennett"
-    collaborators="Marinie Ben"
-    date="Fall 2022"
-    location="Rome, Italy"
 >
     <p></p>
 </Project>

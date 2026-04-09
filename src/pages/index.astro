@@ -53,11 +53,13 @@ const publications = Object.entries(publicationFiles).map(([path, mod]) => ({
 	const filter = params.get("filter");
 
 	if (filter === "projects") {
+		// @ts-ignore
 		window.filterMode.projects = true;
 		document.getElementById("projectsBtn")?.classList.add("nav-active");
 	}
 
 	if (filter === "publications") {
+		// @ts-ignore
 		window.filterMode.publications = true;
 		document.getElementById("publicationsBtn")?.classList.add("nav-active");
 	}

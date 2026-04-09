@@ -6,7 +6,6 @@ import Footer from "@components/Footer.astro";
 interface Props {
   title: string;
   subtitle: string;
-  description: string;
   coverImage: string;
   coverImageAlt: string;
   course: string;
@@ -15,23 +14,29 @@ interface Props {
   collaborators: string;
   date: string;
   location: string;
+  description: string;
 }
-const { title, description, coverImage, coverImageAlt } = Astro.props;
+const { title, subtitle, coverImage, coverImageAlt, description } = Astro.props;
+const author = "Tania Cao";
+const siteName = `${author}.`;
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang="en-US">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-
-    <title>{title} | Tania Cao.</title>
+    <link rel="stylesheet" href="https://use.typekit.net/lrv4mja.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} | {siteName}</title>
 
     <meta property="og:url" content={Astro.url.href} />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={`${title} | Tania Cao.`} />
-    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content={siteName} />
+    <meta name="author" content={author} />
+    <meta property="og:title" content={`${title} | ${siteName}`} />
+    <meta property="og:description" content={`${subtitle}<br />${description}`} />
     <meta property="og:image" content={coverImage} />
     <meta property="og:image:alt" content={coverImageAlt} />
   </head>

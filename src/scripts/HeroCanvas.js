@@ -1,4 +1,5 @@
 export function initHeroCanvas({ projects, publications }) {
+  console.log("Initializing HeroCanvas with data:", { projects, publications });
   /* -------------------------------------------------------
    * 1. DOM + Canvas Setup
    * ----------------------------------------------------- */
