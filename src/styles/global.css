@@ -1,5 +1,104 @@
 @import "tailwindcss";
 
+nav,
+footer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    text-transform: uppercase;
+    font-family: video, serif;
+    font-weight: 600;
+    font-style: normal;
+}
+
+nav {
+    font-size: 2.5rem;
+}
+
+footer {
+    font-size: 1rem;
+}
+
+.icon {
+    height: 24px;
+    width: 24px;
+}
+
+.invert-target {
+    z-index: 40;
+}
+
+div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+button {
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+
+header {
+    display: block;
+    width: 70%;
+    margin: auto;
+    padding-top: 30px;
+    padding-bottom: 15px;
+    align-items: center;
+}
+
+div.header {
+    display: block;
+    padding-top: 30px;
+}
+
+aside {
+    display: block;
+    float: right;
+    width: 25%;
+    height: 100%;
+    margin-left: 30px;
+    overflow: auto;
+    text-align: right;
+}
+
+article {
+    display: block;
+    width: 70%;
+    height: 100%;
+    margin: auto;
+    padding-top: 15px;
+    padding-bottom: 30px;
+    align-items: center;
+    overflow: auto;
+}
+
+section.main {
+    width: auto;
+    flex: left;
+    width: 75%;
+    margin-right: -30px;
+    padding-right: 30px;
+}
+
+@media only screen and (max-width: 620px) {
+
+    aside,
+    section.main {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+section {
+    flex-basis: 100%;
+    width: auto;
+}
+
 h1,
 h2,
 h3,
@@ -45,9 +144,140 @@ li {
     margin-bottom: 1rem;
 }
 
-#logo {
-    font-family: video, serif;
-    font-weight: 600;
-    font-style: normal;
-    text-transform: uppercase;
+a:link {
+    color: (internal value);
+    text-decoration: underline;
+    cursor: auto;
+}
+
+a:link:active {
+    color: (internal value);
+}
+
+a:visited {
+    color: (internal value);
+    text-decoration: underline;
+    cursor: auto;
+}
+
+a:visited:active {
+    color: (internal value);
+}
+
+.container {
+    display: grid;
+    position: relative;
+    grid-template-columns: auto auto auto;
+    grid-template-rows: auto auto auto;
+    height: 100%;
+    gap: 5px;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.image img {
+    display: block;
+    object-fit: fill;
+    width: auto;
+    height: 100%;
+}
+
+.image:hover .overlay {
+    opacity: 1;
+}
+
+/* Desktop only */
+@media (min-width: 768px) {
+    .image:hover .overlay {
+        opacity: 1;
+    }
+}
+
+/* Mobile: overlay stays hidden */
+@media (max-width: 767px) {
+    .overlay {
+        display: none;
+    }
+}
+
+.slideshow {
+    max-width: 1000px;
+    position: relative;
+    margin: auto;
+}
+
+.slide {
+    display: none;
+}
+
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+
+    to {
+        opacity: 1
+    }
+}
+
+gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 100%;
+}
+
+.gallery-item {
+    margin: 5px;
+    border: 1px solid #ccc;
+    width: calc(25% - 20px);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+}
+
+.gallery-item h4.title {
+    gap: 10px;
+    margin: auto;
+    text-align: center;
+}
+
+.gallery-item p.desc {
+    gap: 10px;
+    margin: auto;
+}
+
+@media only screen and (max-width: 768px) {
+    .gallery-item {
+        width: calc(50% - 20px);
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .gallery-item {
+        width: calc(100% - 20px);
+    }
 }

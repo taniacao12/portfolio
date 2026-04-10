@@ -7,9 +7,5 @@ export default defineConfig({
 
   vite: {
     plugins: [tailwindcss()]
-  },
-
-  alias: {
-    "@scripts": "./src/scripts",
-  },
+  }
 });

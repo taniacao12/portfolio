@@ -4,13 +4,55 @@ import Project from "@layouts/Project.astro";
 export const frontmatter = {
     title: "Lens Into The Future",
     coverImage: "/favicon.ico",
-    coverImageAlt: "Lens Into The Future",
 };
 ---
 
 <Project
     title={frontmatter.title}
-    description="Description"
+    subtitle="Material Experimentation for a Low-Carbon Future"
+    description=""
     coverImage={frontmatter.coverImage}
-    coverImageAlt={frontmatter.coverImageAlt}
-/>
+    coverImageAlt={frontmatter.title}
+    course="Architectural Studio V"
+    courseDescription="Innovation Center"
+    instructor="Matthew Lopez"
+    collaborators="Sarah Lowrey"
+    date="Summer 2022"
+    location="Troy, New York"
+>
+    <section class="main">
+        <p>
+            Inspired by the urgency of climate action, this project explores
+            movement and precision as guiding forces in the design of a new
+            industrial biotech hub. As a center for innovation and research, it
+            supports local companies and individuals by providing space for
+            experimentation, development, and economic growth within the city of
+            Troy.
+        </p>
+        <p>
+            The building's envelope initiates the first line of inquiry. Its
+            walls are constructed from biocrete, an emerging concrete
+            alternative that stores carbon through the production of biochar. By
+            using the building itself as a long-term material study, the project
+            positions the structure as both a functional facility and an ongoing
+            experiment—one that could inform future approaches to low-carbon
+            construction.
+        </p>
+        <p>
+            The form of the center emerges from a study of rules and
+            abstraction. Three primary geometries—the lens of a binocular, the
+            sphere, and the box—are precisely arranged and rotated to create a
+            series of interconnected clusters. These volumes are linked by a
+            linear bar and its surrounding landscape, forming a controlled
+            network of nodes. The resulting spatial sequence encourages visitors
+            to navigate between research zones, engage with areas of interest,
+            and explore unfamiliar territories within the campus.
+        </p>
+        <p>
+            Through its material experimentation, geometric rigor, and
+            choreographed movement, Lens Into the Future imagines a biotech hub
+            that is both a catalyst for innovation and a prototype for
+            environmentally responsive design.
+        </p>
+    </section>
+</Project>

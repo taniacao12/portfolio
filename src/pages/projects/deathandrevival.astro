@@ -3,53 +3,52 @@ import Project from "@layouts/Project.astro";
 
 export const frontmatter = {
     title: "Death and Revival",
-    subtitle:"A Study of Bodies, Cities, and Cycles of Change",
     coverImage: "/deathandrevival/Church 2.jpg",
-    coverImageAlt: "Death and Revival",
 };
 ---
 
 <Project
     title={frontmatter.title}
-    subtitle={frontmatter.subtitle}
+    subtitle="A Study of Bodies, Cities, and Cycles of Change"
+    description="Architectural studio project exploring the relationship between human bodies, urban environments, and the cyclical nature of change. The research examines three temporal states—present, death, and revival—juxtaposing the idealized forms of Renaissance architecture with the evolving realities of both body and city. Through this lens, the project reflects on how perfection is not a fixed condition but a cycle of decline, adaptation, and renewal."
     coverImage={frontmatter.coverImage}
-    coverImageAlt={frontmatter.coverImageAlt}
+    coverImageAlt={frontmatter.title}
     course="Architectural Studio VI"
     courseDescription="Radicle Roots"
     instructor="Christianna Bennett"
     collaborators="Marinie Ben"
     date="Fall 2022"
     location="Rome, Italy"
-    description=`<p>
+>
+    <section class="main">
+        <p>
             Renaissance architecture reflects an idealized vision of the human
-            body—proportioned, perfected, and measured against classical notions of
-            harmony. Yet the human body is never static; it adapts to its
-            environment just as landscapes shift in response to natural forces and
-            cultural change. This project examines adaptation across three temporal
-            states—present, death, and revival—while juxtaposing the idealized
-            “perfection” of Renaissance form with the evolving realities of both
-            body and architecture.
+            body—proportioned, perfected, and measured against classical notions
+            of harmony. Yet the human body is never static; it adapts to its
+            environment just as landscapes shift in response to natural forces
+            and cultural change. This project examines adaptation across three
+            temporal states—present, death, and revival—while juxtaposing the
+            idealized “perfection” of Renaissance form with the evolving
+            realities of both body and architecture.
         </p>
-        <br />
         <p>
             In the present, human life is abundant, and the city mirrors the
-            disparities of its population. Wealthier districts expand outward with
-            access to diverse ecological systems, while poorer areas compress into
-            dense, survival-driven conditions. At death, the human population and
-            pollution reach their peak. The world becomes a fractured, war-like
-            artificial landscape where nature has been stripped away, and social
-            structures collapse into pack mentalities, leaving outsiders to fend for
-            themselves. In revival, the environment enters a phase of
-            rehabilitation. Organic matter reclaims the artificial, ecosystems
-            regenerate, and life begins to flourish once more.
+            disparities of its population. Wealthier districts expand outward
+            with access to diverse ecological systems, while poorer areas
+            compress into dense, survival-driven conditions. At death, the human
+            population and pollution reach their peak. The world becomes a
+            fractured, war-like artificial landscape where nature has been
+            stripped away, and social structures collapse into pack mentalities,
+            leaving outsiders to fend for themselves. In revival, the
+            environment enters a phase of rehabilitation. Organic matter
+            reclaims the artificial, ecosystems regenerate, and life begins to
+            flourish once more.
         </p>
-        <br />
         <p>
-            Through these three states, the project reflects on how bodies, cities,
-            and architectural ideals transform under pressure—revealing that
-            perfection is not a fixed condition, but a cycle of decline, adaptation,
-            and renewal.
-        </p>`
->
-    <p></p>
+            Through these three states, the project reflects on how bodies,
+            cities, and architectural ideals transform under pressure—revealing
+            that perfection is not a fixed condition, but a cycle of decline,
+            adaptation, and renewal.
+        </p>
+    </section>
 </Project>

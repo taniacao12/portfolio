@@ -23,41 +23,69 @@ const props = Astro.props;
   coverImage={props.coverImage}
   coverImageAlt={props.coverImageAlt}
 >
-  <div
-    class="mx-auto max-w-5xl items-center justify-between p-4 pointer-events-auto"
-  >
-    <div>
-      <img
-        src={props.coverImage}
-        alt={props.coverImageAlt}
-        class="rounded-lg object-cover object-center"
-      />
-    </div>
-    <br />
-    <br />
-    <div class="flex justify-between items-start w-full">
-      <div class="flex-7 flex-col">
-        <h1>{props.title}</h1>
-        <h2>{props.subtitle}</h2>
-        <br />
+  <header>
+    <img
+      src={props.coverImage}
+      alt={props.coverImageAlt}
+      class="rounded-lg object-cover object-center"
+    />
 
-        <div set:html={props.description} />
-      </div>
-
-      <div class="flex-3 text-right">
-        <p>Course \<br />{props.course}:<br />{props.courseDescription}</p>
-        <br />
-        <p>Instructor \<br />{props.instructor}</p>
-        <br />
-        <p>Collaborators \<br />{props.collaborators}</p>
-        <br />
-        <p>Date \<br />{props.date}</p>
-        <br />
-        <p>Location \<br />{props.location}</p>
-      </div>
+    <div class="header">
+      <h1>{props.title}</h1>
+      <h2>{props.subtitle}</h2>
     </div>
-    <br />
+  </header>
+
+  <article>
+    <aside>
+      {
+        props.course && (
+          <>
+            <h3>Course \</h3>
+            <p>
+              {props.course}: {props.courseDescription}
+            </p>
+          </>
+        )
+      }
+
+      {
+        props.instructor && (
+          <>
+            <h3>Instructor \</h3>
+            <p>{props.instructor}</p>
+          </>
+        )
+      }
+
+      {
+        props.collaborators && (
+          <>
+            <h3>Collaborators \</h3>
+            <p>{props.collaborators}</p>
+          </>
+        )
+      }
+
+      {
+        props.date && (
+          <>
+            <h3>Date \</h3>
+            <p>{props.date}</p>
+          </>
+        )
+      }
+
+      {
+        props.location && (
+          <>
+            <h3>Location \</h3>
+            <p>{props.location}</p>
+          </>
+        )
+      }
+    </aside>
 
     <slot />
-  </div>
+  </article>
 </Base>

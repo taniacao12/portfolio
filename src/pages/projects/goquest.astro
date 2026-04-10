@@ -10,7 +10,277 @@ export const frontmatter = {
 
 <Project
     title={frontmatter.title}
-    description="Description"
+    subtitle="A Playable Immersive Environment Exploring Spatial Logic and Sensory Interaction"
+    description=""
     coverImage={frontmatter.coverImage}
-    coverImageAlt={frontmatter.coverImageAlt}
-/>
+    coverImageAlt={frontmatter.title}
+    course="Architectural Studio VII"
+    courseDescription="Inception"
+    instructor="Carla Leitao"
+    collaborators="Odette Gonzalez & Sarah Lowrey"
+    date="Fall 2023"
+    location="Troy, New York"
+>
+    <section class="main">
+        <p>
+            Go Quest originated as an exploration of immersive space—how
+            environments can shape perception, emotion, and behavior. Early
+            studies examined dreams, sensory distortion, and the psychology of
+            fear, using AI-generated imagery to visualize dream fragments and
+            test how abstraction, atmosphere, and ambiguity influence emotional
+            response. These experiments led to investigations into discomfort
+            and restlessness, drawing inspiration from unsettling media such as
+            the “I'm Poppy” video, whose repetitive calmness and uncanny tone
+            produced visible unease among viewers. Additional research examined
+            immersive simulations of mental disorders, including games designed
+            to approximate the perceptual distortions experienced by individuals
+            with schizophrenia. The team also studied the anechoic “room of
+            silence,” a space so acoustically absorbent that the absence of
+            stimuli causes the brain to generate its own—an effect that induces
+            anxiety in some and calm in others.
+        </p>
+        <p>
+            These independent explorations formed the conceptual foundation for
+            a project centered on immersion as a spatial condition, not merely a
+            visual effect. When the team transitioned into collaborative
+            development, the question became: How can immersion be constructed,
+            controlled, and manipulated through interaction? With access to the
+            Craive Lab—a research facility equipped with high-end 360°
+            projection technology—the project naturally shifted toward digital
+            methods. Unity became the medium through which spatial ideas could
+            be tested, refined, and ultimately experienced as a fully
+            interactive environment.
+        </p>
+    </section>
+
+    <section>
+        <h3>Precedents and Influences</h3>
+        <p>
+            Three key references shaped the conceptual and experiential
+            framework of Go Quest:
+        </p>
+
+        <div class="gallery">
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Cinque Terre"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Borderless — Inviting Chaos</h4>
+                <p class="desc">
+                    TeamLab's Borderless introduced the idea of environments
+                    that behave independently of the user. Through projections,
+                    mirrors, and LED-driven infinity effects, the installation
+                    creates a world where elements move, react, and evolve
+                    without direct player control. This sense of boundlessness
+                    and unpredictability informed Go Quest's approach to
+                    environmental autonomy.
+                </p>
+            </div>
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Forest"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Dark Echo — Trial and Error</h4>
+                <p class="desc">
+                    Dark Echo inspired the use of darkness, sound, and discovery
+                    through action. In a world without visual cues, players
+                    navigate by producing sound that reveals spatial boundaries.
+                    This mechanic—akin to echolocation—reinforced the idea that
+                    exploration should be learned, not instructed. Go Quest
+                    adopts this philosophy by allowing players to uncover the
+                    world piece by piece.
+                </p>
+            </div>
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Northern Lights"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Monument Valley 2 — Contained Tools</h4>
+                <p class="desc">
+                    Monument Valley demonstrated the power of compact, legible
+                    stages where players experiment with tools to progress. Its
+                    clarity and controlled puzzle logic offered a counterpoint
+                    to Borderless's chaos. Go Quest positions itself between
+                    these extremes, blending unpredictability with moments of
+                    agency.
+                </p>
+            </div>
+        </div>
+    </section>
+    <br />
+
+    <section>
+        <h3>From Research to Mechanics</h3>
+        <p>
+            The final game world is built from a field of modular box tiles that
+            function as both spatial units and event triggers. Each tile type
+            embodies a specific behavior, creating a system where interaction
+            generates complexity:
+        </p>
+        <div class="gallery">
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Cinque Terre"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Basic Tile</h4>
+                <p class="desc">
+                    The core spatial unit; its glowing edges orient the player
+                    in darkness.
+                </p>
+            </div>
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Forest"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Light Tile</h4>
+                <p class="desc">
+                    Illuminates on contact, mapping the player's path and
+                    forming a spatial memory.
+                </p>
+            </div>
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Northern Lights"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Trap Tile</h4>
+                <p class="desc">
+                    Vanishes when stepped on, opening a void that may cause the
+                    player to fall and respawn.
+                </p>
+            </div>
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Northern Lights"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Colored Tiles</h4>
+                <p class="desc">
+                    Encode progress through shifting hues, creating a visual
+                    hierarchy tied to movement and time.
+                </p>
+            </div>
+            <div class="gallery-item">
+                <img
+                    src={frontmatter.coverImage}
+                    alt="Northern Lights"
+                    width="600"
+                    height="400"
+                />
+                <h4 class="title">Reactive Tiles</h4>
+                <p class="desc">
+                    Activate, resize, or extrude other tiles, revealing new
+                    platforms and expanding the navigable world.
+                </p>
+            </div>
+        </div>
+        <p>
+            This taxonomy functions like an architectural material palette—each
+            element has a behavior, a purpose, and a role in shaping the
+            environment.
+        </p>
+    </section>
+
+    <section>
+        <h3>Immersion and Sensory Design</h3>
+        <div>
+            <p style="display: block; width: 70%; padding-right:15px">
+                Sound plays a central role in constructing immersion.
+                Atmospheric audio establishes tone, while reactive sound effects
+                respond to player movement, reinforcing the connection between
+                user and environment. Pulsating rhythms mark the passage of
+                time, and subtle hums from glowing tiles create a layered
+                soundscape that deepens presence. The interplay of darkness,
+                illumination, and sound transforms navigation into a sensory
+                experience rather than a purely visual one.
+            </p>
+            <img
+                src={frontmatter.coverImage}
+                alt="Northern Lights"
+                style="display: block; width: 30%; padding-left:15px"
+                width="600"
+                height="400"
+            />
+        </div>
+    </section>
+
+    <section>
+        <h3>Gameplay and Spatial Evolution</h3>
+        <div>
+            <p>
+                Players begin in darkness, illuminated only by a grid of tiles.
+                Each step lights the tile beneath them, creating a glowing trace
+                that records their movement. Tile functions activate on contact,
+                layering interaction over exploration. Reaching the periphery
+                triggers the first major event: the revelation of spatial bounds
+                beyond the ground plane.
+            </p>
+            <p>
+                Players begin in darkness, illuminated only by a grid of tiles.
+                Each step lights the tile beneath them, creating a glowing trace
+                that records their movement. Tile functions activate on contact,
+                layering interaction over exploration. Reaching the periphery
+                triggers the first major event: the revelation of spatial bounds
+                beyond the ground plane.
+            </p>
+            <p>
+                By the time all triggers activate, the relationship between
+                player and world has fundamentally changed. What began as a
+                predictable environment becomes a complex, shifting system that
+                challenges perception, memory, and control.
+            </p>
+        </div>
+
+        <section>
+            <h3>Immersive Presentation</h3>
+            <div>
+                <p>
+                    The final version of Go Quest was presented in the Craive
+                    Lab's 360° projection environment, allowing the game to be
+                    experienced as a spatial installation. The surrounding
+                    projections amplified the game's atmospheric qualities,
+                    immersing players in a world where sound, light, and
+                    movement enveloped them from all sides. This setting
+                    reinforced the project's origins in immersive research and
+                    demonstrated how digital environments can operate as
+                    architectural experiences.
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h3>Conclusion</h3>
+            <div>
+                <p>
+                    What began as an abstract study of dreams, emotions, and
+                    sensory immersion evolved into a fully interactive
+                    Unity-built world. Go Quest merges architectural thinking
+                    with game design, using spatial logic, behavioral systems,
+                    and sensory cues to construct an environment that unfolds
+                    through exploration. It stands as both a game and a spatial
+                    experiment—an investigation into how immersion can be
+                    designed, manipulated, and experienced.
+                </p>
+            </div>
+        </section>
+    </section>
+</Project>

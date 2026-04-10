@@ -1,13 +1,18 @@
-export function InitHeroCanvas({ projects, publications }) {
-  // console.log("projects:", projects);
-  // console.log("publications:", publications);
-
-  /* -------------------------------------------------------
-   * 1. DOM + Canvas Setup
-   * ----------------------------------------------------- */
+export function InitHeroCanvas({ projects = [], publications = [] }) {
   const canvas = document.getElementById("heroCanvas");
+  const invertMaskCanvas = document.getElementById("invertMaskCanvas");
   const linkOverlay = document.getElementById("linkOverlay");
   const ctx = canvas.getContext("2d");
+  const offscreen = document.createElement("canvas");
+  const offctx = offscreen.getContext("2d", { willReadFrequently: true });
+  const minR = 10;
+  const maxR = 30;
+  const ambientNodeCount = Math.round(window.innerWidth * window.innerHeight / 15000);
+  console.log(ambientNodeCount)
+  let nodes = [];
+  let active = null;
+
+  const queryInvertTargets = () => [...document.querySelectorAll(".invert-target")];
 
   function resize() {
     canvas.width = window.innerWidth;
@@ -16,36 +21,6 @@ export function InitHeroCanvas({ projects, publications }) {
   resize();
   window.addEventListener("resize", resize);
 
-  /* -------------------------------------------------------
-   * 2. State & Constants
-   * ----------------------------------------------------- */
-  const projectData = projects || [];
-  const publicationData = publications || [];
-  const NODE_COUNT = 50;
-  console.log("projectData:", projectData);
-  console.log("publicationData:", publicationData);
-
-  let nodes = [];
-  let activeProject = null;
-
-  /* -------------------------------------------------------
-   * 3. Utility: Ambient Node Management
-   * ----------------------------------------------------- */
-  function createAmbientNode() {
-    nodes.push(new Node(null, "ambient"));
-  }
-
-  function removeRandomAmbientNode() {
-    const ambientNodes = nodes.filter(n => n.type === "ambient" && !n.dying);
-    if (ambientNodes.length === 0) return;
-
-    const victim = ambientNodes[Math.floor(Math.random() * ambientNodes.length)];
-    victim.dying = true; // fade-out instead of instant removal
-  }
-
-  /* -------------------------------------------------------
-   * 4. Node Class
-   * ----------------------------------------------------- */
   class Node {
     constructor(data, type = "ambient") {
       this.type = type;
@@ -53,12 +28,15 @@ export function InitHeroCanvas({ projects, publications }) {
       // position & size
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.r = data ? 50 : 4 + Math.random() * 10;
+      this.r = minR + Math.random() * (maxR - minR);
+      if (data) {
+        this.r *= 1.4;
+      }
       this.baseR = this.r;
       this.targetR = this.r;
 
       // animation tuning
-      this.expandSpeed = data ? 0.08 : 0.015;
+      this.expandSpeed = data ? 0.08 : 0.02;
       this.revealThreshold = data ? 1.2 : 1.4;
 
       // movement
@@ -76,6 +54,7 @@ export function InitHeroCanvas({ projects, publications }) {
       if (data) {
         this.href = data.href;
         this.img = new Image();
+        this.loaded = false;
         this.img.onload = () => (this.loaded = true);
         this.img.src = data.coverImage;
         this.img.alt = data.title;
@@ -83,13 +62,33 @@ export function InitHeroCanvas({ projects, publications }) {
         this.img = null;
       }
 
-      // clamp inside canvas
+      this.invertedImg = null;
       this.x = Math.max(this.r, Math.min(canvas.width - this.r, this.x));
       this.y = Math.max(this.r, Math.min(canvas.height - this.r, this.y));
     }
 
+    generateInvertedImage() {
+      if (!this.img || !this.loaded) return;
+      const size = this.r * 2;
+      offscreen.width = size;
+      offscreen.height = size;
+      offctx.clearRect(0, 0, size, size);
+      offctx.drawImage(this.img, 0, 0, size, size);
+
+      const imgData = offctx.getImageData(0, 0, size, size);
+      const data = imgData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        data[i] = 255 - data[i];
+        data[i + 1] = 255 - data[i + 1];
+        data[i + 2] = 255 - data[i + 2];
+      }
+      offctx.putImageData(imgData, 0, 0);
+      this.invertedImg = new Image();
+      this.invertedImg.src = offscreen.toDataURL();
+    }
+
     update() {
-      /* movement */
+      // movement
       this.x += this.vx;
       this.y += this.vy;
 
@@ -110,10 +109,10 @@ export function InitHeroCanvas({ projects, publications }) {
         this.vy = -Math.abs(this.vy);
       }
 
-      /* smooth radius animation */
+      // smooth radius animation
       this.r += (this.targetR - this.r) * this.expandSpeed;
 
-      /* keep hovered nodes from clipping edges */
+      // keep hovered nodes from clipping edges
       if (this.hovered) {
         const push = 0.5;
         if (this.x - this.r < 0) this.x = this.r + push;
@@ -122,7 +121,7 @@ export function InitHeroCanvas({ projects, publications }) {
         if (this.y + this.r > canvas.height) this.y = canvas.height - this.r - push;
       }
 
-      /* fade-out animation */
+      // fade-out animation
       if (this.dying) {
         this.r *= 0.9;
         this.opacity *= 0.85;
@@ -131,52 +130,113 @@ export function InitHeroCanvas({ projects, publications }) {
     }
 
     draw() {
-      ctx.save();
-
-      /* filtering logic */
       const fm = window.filterMode || { projects: false, publications: false };
       const isProject = this.type === "project";
       const isPublication = this.type === "publication";
+      const dimmed = fm.projects || fm.publications
+        ? fm.projects && !fm.publications ? !isProject
+          : !fm.projects && fm.publications ? !isPublication
+            : !(isProject || isPublication)
+        : false;
 
-      let dimmed = false;
+      const overlapping = queryInvertTargets().some(t => circleIntersectsRect(this.x, this.y, this.r, t.getBoundingClientRect()));
+      if (overlapping && !this.invertedImg) this.generateInvertedImage();
 
-      if (!fm.projects && !fm.publications) dimmed = false;
-      else if (fm.projects && !fm.publications) dimmed = !isProject;
-      else if (!fm.projects && fm.publications) dimmed = !isPublication;
-      else if (fm.projects && fm.publications) dimmed = !(isProject || isPublication);
-
-      /* draw base circle */
+      ctx.save();
       ctx.globalAlpha = this.opacity;
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
       ctx.closePath();
       ctx.clip();
 
-      ctx.fillStyle = dimmed ? "rgba(0,0,0,0.1)" : "black";
+      let fill;
+      if (overlapping && dimmed) {
+        fill = "rgba(255,255,255,0.1)";
+      } else if (dimmed) {
+        fill = "rgba(0,0,0,0.1)";
+      } else if (overlapping) {
+        fill = "white";
+      } else {
+        fill = "black";
+      }
+      ctx.fillStyle = fill;
       ctx.fill();
 
-      /* reveal image */
       const expandedEnough = this.r > this.baseR * this.revealThreshold;
       if (!dimmed && this.hovered && expandedEnough && this.img && this.loaded) {
-        ctx.drawImage(this.img, this.x - this.r, this.y - this.r, this.r * 2, this.r * 2);
+        ctx.drawImage(overlapping ? this.invertedImg : this.img, this.x - this.r, this.y - this.r, this.r * 2, this.r * 2);
       }
-
       ctx.restore();
     }
   }
 
-  /* -------------------------------------------------------
-   * 5. Initialization: Create Nodes
-   * ----------------------------------------------------- */
-  projectData.forEach(p => nodes.push(new Node(p, "project")));
-  publicationData.forEach(p => nodes.push(new Node(p, "publication")));
-  for (let i = 0; i < NODE_COUNT; i++) nodes.push(new Node(null, "ambient"));
+  function createAmbientNode() {
+    nodes.push(new Node(null, "ambient"));
+  }
 
-  /* -------------------------------------------------------
-   * 6. Event Listeners
-   * ----------------------------------------------------- */
+  function removeRandomAmbientNode() {
+    const ambientNodes = nodes.filter(n => n.type === "ambient" && !n.dying);
+    if (ambientNodes.length === 0) return;
+
+    const victim = ambientNodes[Math.floor(Math.random() * ambientNodes.length)];
+    victim.dying = true; // fade-out instead of instant removal
+  }
+
+  function resolveCollisions() {
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+
+        // only repel project/publication nodes
+        const isAContent = a.type === "project" || a.type === "publication";
+        const isBContent = b.type === "project" || b.type === "publication";
+        if (!isAContent || !isBContent) continue;
+
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        const minDist = a.r + b.r;
+
+        if (dist < minDist && dist > 0) {
+          // normalize collision normal
+          const nx = dx / dist;
+          const ny = dy / dist;
+
+          // push them apart equally
+          const overlap = minDist - dist;
+          const push = overlap / 2;
+          a.x -= nx * push;
+          a.y -= ny * push;
+          b.x += nx * push;
+          b.y += ny * push;
+
+          // bounce velocities (like screen edges)
+          const relVx = b.vx - a.vx;
+          const relVy = b.vy - a.vy;
+
+          const dot = relVx * nx + relVy * ny;
+
+          if (dot < 0) {
+            const bounce = 1.0; // elasticity
+            const impulse = (2 * dot) / 2; // equal mass
+
+            a.vx += impulse * nx * bounce;
+            a.vy += impulse * ny * bounce;
+            b.vx -= impulse * nx * bounce;
+            b.vy -= impulse * ny * bounce;
+          }
+        }
+      }
+    }
+  }
+
+  projects.forEach(p => nodes.push(new Node(p, "project")));
+  publications.forEach(p => nodes.push(new Node(p, "publication")));
+  for (let i = 0; i < ambientNodeCount; i++) nodes.push(new Node(null, "ambient"));
+
   canvas.addEventListener("mousemove", e => {
-    activeProject = null;
+    active = null;
 
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left;
@@ -187,14 +247,14 @@ export function InitHeroCanvas({ projects, publications }) {
       n.hovered = dist < n.baseR * 2;
       n.targetR = n.hovered ? n.baseR * 3 : n.baseR;
 
-      if (n.hovered && n.href) activeProject = n;
+      if (n.hovered && n.href) active = n;
     });
 
-    if (activeProject) {
-      const size = activeProject.r * 2;
-      linkOverlay.href = activeProject.href;
-      linkOverlay.style.left = `${activeProject.x - activeProject.r}px`;
-      linkOverlay.style.top = `${activeProject.y - activeProject.r}px`;
+    if (active) {
+      const size = active.r * 2;
+      linkOverlay.href = active.href;
+      linkOverlay.style.left = `${active.x - active.r}px`;
+      linkOverlay.style.top = `${active.y - active.r}px`;
       linkOverlay.style.width = `${size}px`;
       linkOverlay.style.height = `${size}px`;
       linkOverlay.style.display = "block";
@@ -218,9 +278,6 @@ export function InitHeroCanvas({ projects, publications }) {
     });
   });
 
-  /* -------------------------------------------------------
-   * 7. Draw Connections
-   * ----------------------------------------------------- */
   function drawConnections() {
     for (let i = 0; i < nodes.length; i++) {
       for (let j = i + 1; j < nodes.length; j++) {
@@ -239,9 +296,37 @@ export function InitHeroCanvas({ projects, publications }) {
     }
   }
 
-  /* -------------------------------------------------------
-   * 8. Animation Loop
-   * ----------------------------------------------------- */
+  function circleIntersectsRect(cx, cy, r, rect) {
+    // find the closest point on the rectangle to the circle center
+    const closestX = Math.max(rect.left, Math.min(cx, rect.right));
+    const closestY = Math.max(rect.top, Math.min(cy, rect.bottom));
+
+    // compute distance from circle center to that point
+    const dx = cx - closestX;
+    const dy = cy - closestY;
+
+    // overlap if distance <= radius
+    return (dx * dx + dy * dy) <= (r * r);
+  }
+
+  function drawInvertMask() {
+    const mask = invertMaskCanvas;
+    const mctx = mask.getContext("2d");
+    mask.width = window.innerWidth;
+    mask.height = window.innerHeight;
+    mctx.clearRect(0, 0, mask.width, mask.height);
+
+    const targetRects = queryInvertTargets().map(t => t.getBoundingClientRect());
+    nodes.forEach(n => {
+      if (targetRects.some(rect => circleIntersectsRect(n.x, n.y, n.r, rect))) {
+        mctx.beginPath();
+        mctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        mctx.fillStyle = "white";
+        mctx.fill();
+      }
+    });
+  }
+
   function animate() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -249,6 +334,9 @@ export function InitHeroCanvas({ projects, publications }) {
       n.update();
       n.draw();
     });
+
+    resolveCollisions();
+    drawInvertMask();
 
     nodes = nodes.filter(n => !n.dead);
 
@@ -258,10 +346,7 @@ export function InitHeroCanvas({ projects, publications }) {
 
   animate();
 
-  /* -------------------------------------------------------
-   * 9. Ambient Randomizer
-   * ----------------------------------------------------- */
   setInterval(() => {
     Math.random() < 0.5 ? createAmbientNode() : removeRandomAmbientNode();
-  }, 2000);
+  }, 1500);
 }

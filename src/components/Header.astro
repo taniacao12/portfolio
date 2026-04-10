@@ -1,27 +1,18 @@
-<nav class="relative w-full py-4 z-1 pointer-events-none">
-  <div
-    class="flex items-center justify-between max-w-7xl mx-auto px-4 pointer-events-auto"
-  >
-    <a href="/" class="flex items-center px-3 py-2 rounded-md bg-white/50">
-      <img src="/favicon.ico" alt="Tania Cao." class="h-8 w-8" />
-      <span id="logo" class="ml-3">Tania Cao.</span>
+---
+import { siteName } from "@layouts/Base.astro";
+---
+
+<nav>
+  <div>
+    <a href="/" class="invert-target">
+      <img src="/favicon.ico" alt={siteName} class="h-8 w-8 mr-3" />
+      {siteName}
     </a>
+  </div>
 
-    <div class="sm:flex space-x-6 text-sm">
-      <button
-        id="projectsBtn"
-        class="px-3 py-2 rounded-md bg-white/50 hover:bg-black hover:text-white focus:outline-none"
-      >
-        Projects
-      </button>
-
-      <button
-        id="publicationsBtn"
-        class="px-3 py-2 rounded-md bg-white/50 hover:bg-black hover:text-white focus:outline-none"
-      >
-        Publications
-      </button>
-    </div>
+  <div>
+    <button id="projectsBtn" class="invert-target mr-4"> Projects </button>
+    <button id="publicationsBtn" class="invert-target"> Publications </button>
   </div>
 </nav>
 
@@ -43,14 +34,14 @@
     console.error("Filter buttons not found in DOM");
   } else {
     function toggle(btn: HTMLButtonElement, key: "projects" | "publications") {
-      const isActive = btn.classList.contains("nav-active");
+      const isActive = btn.classList.contains("active");
 
       if (isActive) {
-        btn.classList.remove("nav-active");
+        btn.classList.remove("active");
         // @ts-ignore
         window.filterMode[key] = false;
       } else {
-        btn.classList.add("nav-active");
+        btn.classList.add("active");
         // @ts-ignore
         window.filterMode[key] = true;
       }
@@ -75,16 +66,23 @@
 </script>
 
 <style>
-  nav {
-    font-size: 2.5rem;
+  a {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    text-decoration: none;
+    cursor: pointer;
   }
   button {
+    cursor: pointer;
     text-transform: uppercase;
-    font-family: Video;
     font-size: 1rem;
   }
-  .nav-active {
-    background-color: black !important;
-    color: white !important;
+  button:hover {
+    border: 2px solid black;
+  }
+  .active {
+    color: white;
+    background-color: black;
   }
 </style>

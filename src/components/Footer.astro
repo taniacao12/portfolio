@@ -1,58 +1,47 @@
-<footer class="relative z-10 pointer-events-none m-4">
-  <div
-    class="mx-auto flex max-w-7xl items-center justify-between p-4 pointer-events-auto"
-  >
-    <span class="px-3 py-2 rounded-md bg-white/50">
-      © 2026 <a id="logo" href="/">Tania Cao.</a> All Rights Reserved.
-    </span>
+---
+import { siteName } from "@layouts/Base.astro";
+---
 
-    <!-- Icons -->
-    <ul class="flex items-center space-x-6">
-      <!-- LinkedIn -->
-      <li class="group cursor-pointer">
-        <a
-          href="https://www.linkedin.com/in/taniacao/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="https://img.icons8.com/ios/100/linkedin.png"
-            alt="LinkedIn"
-            class="block h-6 w-6 group-hover:hidden"
-          />
-          <img
-            src="https://img.icons8.com/ios-filled/100/linkedin.png"
-            alt="LinkedIn"
-            class="hidden h-6 w-6 group-hover:block"
-          />
-        </a>
-      </li>
+<footer>
+  <div class="invert-target py-2">
+    © 2026 {siteName} All Rights Reserved.
+  </div>
 
-      <!-- Email -->
-      <li class="group cursor-pointer">
-        <a
-          href="mailto:taniacao12@gmail.com"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="https://img.icons8.com/ios/100/new-post--v1.png"
-            alt="Email"
-            class="block h-6 w-6 group-hover:hidden"
-          />
-          <img
-            src="https://img.icons8.com/ios-filled/100/new-post.png"
-            alt="Email"
-            class="hidden h-6 w-6 group-hover:block"
-          />
-        </a>
-      </li>
-    </ul>
+  <div>
+    <a
+      class="invert-target group mr-4"
+      href="https://www.linkedin.com/in/taniacao/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="https://img.icons8.com/ios/100/linkedin.png"
+        alt="LinkedIn"
+        class="icon block group-hover:hidden"
+      />
+      <img
+        src="https://img.icons8.com/ios-filled/100/linkedin.png"
+        alt="LinkedIn"
+        class="icon hidden group-hover:block"
+      />
+    </a>
+
+    <a
+      class="invert-target group"
+      href="mailto:taniacao12@gmail.com"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src="https://img.icons8.com/ios/100/new-post--v1.png"
+        alt="Email"
+        class="icon block group-hover:hidden"
+      />
+      <img
+        src="https://img.icons8.com/ios-filled/100/new-post.png"
+        alt="Email"
+        class="icon hidden group-hover:block"
+      />
+    </a>
   </div>
 </footer>
-
-<style>
-  footer {
-    font-size: 0.875rem;
-  }
-</style>

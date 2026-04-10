@@ -18,25 +18,17 @@ const props = Astro.props;
   coverImage={props.coverImage}
   coverImageAlt={props.coverImageAlt}
 >
-  <div
-    class="mx-auto max-w-5xl items-center justify-between p-4 pointer-events-auto"
-  >
-    <div class="flex justify-between items-start w-full">
-      <div class="flex-7 flex-col">
-        <h1>{props.title}</h1>
-        <h2>{props.subtitle}</h2>
-        <br />
+  <header>
+    <h1>{props.title}</h1>
+    <h2>{props.subtitle}</h2>
+  </header>
 
-        <div set:html={props.description} />
-      </div>
-
-      <div class="flex-3 text-right">
-        <p>Date \</p>
-        <p>{props.date}</p>
-      </div>
-    </div>
-    <br />
+  <article>
+    <aside>
+      <h3>Date \</h3>
+      <p>{props.date}</p>
+    </aside>
 
     <slot />
-  </div>
+  </article>
 </Base>

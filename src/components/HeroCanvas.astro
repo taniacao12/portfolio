@@ -7,10 +7,8 @@ const publications = GetPublications();
 // console.log("publications:", publications);
 ---
 
-<canvas
-  id="heroCanvas"
-  class="relative z-0 inset-0 h-full w-full pointer-events-auto"></canvas>
-
+<canvas id="heroCanvas"></canvas>
+<canvas id="invertMaskCanvas"></canvas>
 <a id="linkOverlay"></a>
 
 <script type="module" define:vars={{ projects, publications }}>
@@ -25,10 +23,15 @@ const publications = GetPublications();
     width: 100%;
     height: 100%;
   }
+  #invertMaskCanvas {
+    mix-blend-mode: difference;
+    pointer-events: none;
+    z-index: 50;
+  }
+
   #linkOverlay {
     position: absolute;
     display: none;
     pointer-events: auto;
-    z-index: 10;
   }
 </style>
