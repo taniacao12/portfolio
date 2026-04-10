@@ -1,5 +1,7 @@
-export function initHeroCanvas({ projects, publications }) {
-  console.log("Initializing HeroCanvas with data:", { projects, publications });
+export function InitHeroCanvas({ projects, publications }) {
+  // console.log("projects:", projects);
+  // console.log("publications:", publications);
+
   /* -------------------------------------------------------
    * 1. DOM + Canvas Setup
    * ----------------------------------------------------- */
@@ -20,6 +22,8 @@ export function initHeroCanvas({ projects, publications }) {
   const projectData = projects || [];
   const publicationData = publications || [];
   const NODE_COUNT = 50;
+  console.log("projectData:", projectData);
+  console.log("publicationData:", publicationData);
 
   let nodes = [];
   let activeProject = null;
@@ -74,6 +78,7 @@ export function initHeroCanvas({ projects, publications }) {
         this.img = new Image();
         this.img.onload = () => (this.loaded = true);
         this.img.src = data.coverImage;
+        this.img.alt = data.title;
       } else {
         this.img = null;
       }

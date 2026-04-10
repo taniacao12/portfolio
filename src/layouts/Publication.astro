@@ -1,48 +1,38 @@
 ---
 import Base from "@layouts/Base.astro";
-const {
-  title,
-  subtitle,
-  description,
-  coverImage,
-  coverImageAlt,
-  course,
-  courseDescription,
-  instructor,
-  collaborators,
-  date,
-  location,
-} = Astro.props;
+
+interface Props {
+  title: string;
+  subtitle: string;
+  description: string;
+  coverImage: string;
+  coverImageAlt: string;
+  date: string;
+}
+const props = Astro.props;
 ---
 
 <Base
-  title={title}
-  subtitle={subtitle}
-  coverImage={coverImage}
-  coverImageAlt={coverImageAlt}
-  course={course}
-  courseDescription={courseDescription}
-  instructor={instructor}
-  collaborators={collaborators}
-  date={date}
-  location={location}
-  description={description}
+  title={props.title}
+  description={props.description}
+  coverImage={props.coverImage}
+  coverImageAlt={props.coverImageAlt}
 >
   <div
     class="mx-auto max-w-5xl items-center justify-between p-4 pointer-events-auto"
   >
     <div class="flex justify-between items-start w-full">
       <div class="flex-7 flex-col">
-        <h1>{title}</h1>
-        <h2>{subtitle}</h2>
+        <h1>{props.title}</h1>
+        <h2>{props.subtitle}</h2>
         <br />
 
-        <div set:html={description} />
+        <div set:html={props.description} />
       </div>
 
       <div class="flex-3 text-right">
         <p>Date \</p>
-        <p>{date}</p>
+        <p>{props.date}</p>
       </div>
     </div>
     <br />

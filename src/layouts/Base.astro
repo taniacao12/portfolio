@@ -5,18 +5,11 @@ import Footer from "@components/Footer.astro";
 
 interface Props {
   title: string;
-  subtitle: string;
+  description: string;
   coverImage: string;
   coverImageAlt: string;
-  course: string;
-  courseDescription: string;
-  instructor: string;
-  collaborators: string;
-  date: string;
-  location: string;
-  description: string;
 }
-const { title, subtitle, coverImage, coverImageAlt, description } = Astro.props;
+const { title, description, coverImage, coverImageAlt } = Astro.props;
 const author = "Tania Cao";
 const siteName = `${author}.`;
 ---
@@ -29,16 +22,25 @@ const siteName = `${author}.`;
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="https://use.typekit.net/lrv4mja.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | {siteName}</title>
 
-    <meta property="og:url" content={Astro.url.href} />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={siteName} />
+    <title>{title} | {siteName}</title>
+    <meta name="description" content={description} />
     <meta name="author" content={author} />
+    <link rel="canonical" href="https://taniacao.vercel.app/" />
+
+    <!-- Open Graph -->
     <meta property="og:title" content={`${title} | ${siteName}`} />
-    <meta property="og:description" content={`${subtitle}<br />${description}`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:image" content={coverImage} />
     <meta property="og:image:alt" content={coverImageAlt} />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} | ${siteName}`} />
+    <meta name="twitter:description" content={description} />
   </head>
 
   <body class="flex min-h-screen flex-col">

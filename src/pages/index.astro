@@ -1,51 +1,15 @@
 ---
 import Base from "@layouts/Base.astro";
 import HeroCanvas from "@components/HeroCanvas.astro";
-
-type ProjectModule = {
-	frontmatter: { coverImage: string };
-};
-type PublicationModule = {
-	frontmatter: { coverImage: string };
-};
-
-const projectFiles = import.meta.glob<ProjectModule>(
-	"/src/pages/projects/*.astro",
-	{ eager: true },
-);
-const publicationFiles = import.meta.glob<PublicationModule>(
-	"/src/pages/publications/*.astro",
-	{ eager: true },
-);
-// console.log("projectFiles:", Object.keys(projectFiles));
-// console.log("publicationFiles:", Object.keys(publicationFiles));
-
-const projects = Object.entries(projectFiles).map(([path, mod]) => ({
-	href: path.replace("/src/pages", "").replace(".astro", ""),
-	coverImage: mod.frontmatter.coverImage,
-}));
-const publications = Object.entries(publicationFiles).map(([path, mod]) => ({
-	href: path.replace("/src/pages", "").replace(".astro", ""),
-	coverImage: mod.frontmatter.coverImage,
-}));
-// console.log("projects:", projects);
-// console.log("publications:", publications);
 ---
 
 <Base
 	title="Portfolio"
-	subtitle="A series of selected works by Tania Cao."
-	description=""
-	coverImage={"/favicon.png"}
-	coverImageAlt={"Tania Cao."}
-	course=""
-	courseDescription=""
-	instructor=""
-	collaborators=""
-	date=""
-	location=""
+	description="A series of selected works by Tania Cao."
+	coverImage="/favicon.ico"
+	coverImageAlt="Tania Cao."
 >
-	<HeroCanvas projects={projects} publications={publications} />
+	<HeroCanvas />
 </Base>
 
 <script>

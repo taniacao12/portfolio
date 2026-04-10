@@ -3,24 +3,16 @@ import Publication from "@layouts/Publication.astro";
 
 export const frontmatter = {
     title: "CodeCheck",
-    subtitle:
-        "Accelerating Architectural Workflows Through Automated Code Compliance",
     coverImage: "/codecheck/Icon.png",
-    coverImageAlt: "CodeCheck",
 };
 ---
 
 <Publication
     title={frontmatter.title}
-    subtitle={frontmatter.subtitle}
+    subtitle="Accelerating Architectural Workflows Through Automated Code Compliance"
     coverImage={frontmatter.coverImage}
-    coverImageAlt={frontmatter.coverImageAlt}
-    course=""
-    courseDescription=""
-    instructor=""
-    collaborators=""
+    coverImageAlt={frontmatter.title}
     date="Aug 2025"
-    location=""
     description=`<p>
             CodeCheck investigates how zoning laws, building codes, and regulatory
             processes shape the relationship between architects, clients, and city

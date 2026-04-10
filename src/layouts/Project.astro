@@ -1,40 +1,35 @@
 ---
 import Base from "@layouts/Base.astro";
-const {
-  title,
-  subtitle,
-  coverImage,
-  coverImageAlt,
-  course,
-  courseDescription,
-  instructor,
-  collaborators,
-  date,
-  location,
-  description,
-} = Astro.props;
+
+interface Props {
+  title: string;
+  subtitle: string;
+  description: string;
+  coverImage: string;
+  coverImageAlt: string;
+  course: string;
+  courseDescription: string;
+  instructor: string;
+  collaborators: string;
+  date: string;
+  location: string;
+}
+const props = Astro.props;
 ---
 
 <Base
-  title={title}
-  subtitle={subtitle}
-  coverImage={coverImage}
-  coverImageAlt={coverImageAlt}
-  course={course}
-  courseDescription={courseDescription}
-  instructor={instructor}
-  collaborators={collaborators}
-  date={date}
-  location={location}
-  description={description}
+  title={props.title}
+  description={props.description}
+  coverImage={props.coverImage}
+  coverImageAlt={props.coverImageAlt}
 >
   <div
     class="mx-auto max-w-5xl items-center justify-between p-4 pointer-events-auto"
   >
     <div>
       <img
-        src={coverImage}
-        alt={coverImageAlt}
+        src={props.coverImage}
+        alt={props.coverImageAlt}
         class="rounded-lg object-cover object-center"
       />
     </div>
@@ -42,23 +37,23 @@ const {
     <br />
     <div class="flex justify-between items-start w-full">
       <div class="flex-7 flex-col">
-        <h1>{title}</h1>
-        <h2>{subtitle}</h2>
+        <h1>{props.title}</h1>
+        <h2>{props.subtitle}</h2>
         <br />
 
-        <div set:html={description} />
+        <div set:html={props.description} />
       </div>
 
       <div class="flex-3 text-right">
-        <p>Course \<br />{course}:<br />{courseDescription}</p>
+        <p>Course \<br />{props.course}:<br />{props.courseDescription}</p>
         <br />
-        <p>Instructor \<br />{instructor}</p>
+        <p>Instructor \<br />{props.instructor}</p>
         <br />
-        <p>Collaborators \<br />{collaborators}</p>
+        <p>Collaborators \<br />{props.collaborators}</p>
         <br />
-        <p>Date \<br />{date}</p>
+        <p>Date \<br />{props.date}</p>
         <br />
-        <p>Location \<br />{location}</p>
+        <p>Location \<br />{props.location}</p>
       </div>
     </div>
     <br />

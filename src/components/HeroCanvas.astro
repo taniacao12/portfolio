@@ -1,5 +1,10 @@
 ---
-const { projects, publications } = Astro.props;
+import { GetProjects, GetPublications } from "@scripts/GetContent";
+
+const projects = GetProjects();
+const publications = GetPublications();
+// console.log("projects:", projects);
+// console.log("publications:", publications);
 ---
 
 <canvas
@@ -9,8 +14,8 @@ const { projects, publications } = Astro.props;
 <a id="linkOverlay"></a>
 
 <script type="module" define:vars={{ projects, publications }}>
-  import { initHeroCanvas } from "/src/scripts/HeroCanvas.js";
-  initHeroCanvas({ projects, publications });
+  import { InitHeroCanvas } from "/src/scripts/HeroCanvas.js";
+  InitHeroCanvas({ projects, publications });
 </script>
 
 <style>
