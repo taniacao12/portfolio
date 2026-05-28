@@ -3,31 +3,37 @@ import { siteName } from "@layouts/Base.astro";
 ---
 
 <nav>
-  <div>
-    <a href="/" class="invert-target">
-      <img src="/favicon.ico" alt={siteName} class="h-8 w-8 mr-3" />
-      {siteName}
-    </a>
-  </div>
+  <a href="/" class="brand row">
+    <img src="/favicon.svg" alt={siteName} class="logo invert" />
+    {siteName}
+  </a>
 
-  <div>
-    <button id="projectsBtn" class="invert-target mr-4"> Projects </button>
-    <button id="publicationsBtn" class="invert-target"> Publications </button>
+  <div class="row">
+    <div class="buttonGroup row-tight">
+      <button id="projectsBtn">Projects</button>
+      <button id="publicationsBtn">Publications</button>
+    </div>
+    <button id="galleryBtn">
+      <img class="icon" src="https://img.icons8.com/ios/100/movie--v1.png" />
+    </button>
   </div>
 </nav>
 
 <script>
-  // @ts-ignore
   window.filterMode = {
     projects: false,
     publications: false,
   };
+  window.heroTransitionStart = false;
 
   const projectsBtn = document.getElementById(
     "projectsBtn",
   )! as HTMLButtonElement;
   const publicationsBtn = document.getElementById(
     "publicationsBtn",
+  )! as HTMLButtonElement;
+  const galleryBtn = document.getElementById(
+    "galleryBtn",
   )! as HTMLButtonElement;
 
   if (!projectsBtn || !publicationsBtn) {
@@ -36,15 +42,24 @@ import { siteName } from "@layouts/Base.astro";
     function toggle(btn: HTMLButtonElement, key: "projects" | "publications") {
       const isActive = btn.classList.contains("active");
 
-      if (isActive) {
-        btn.classList.remove("active");
-        // @ts-ignore
-        window.filterMode[key] = false;
-      } else {
-        btn.classList.add("active");
-        // @ts-ignore
-        window.filterMode[key] = true;
-      }
+      // update filter state
+      window.filterMode[key] = !isActive;
+      btn.classList.toggle("active");
+
+      // always read fresh filter state
+      const fm = window.filterMode;
+      const images = document.querySelectorAll(".images img");
+
+      images.forEach((img) => {
+        const isProject = img.classList.contains("project");
+        const isPublication = img.classList.contains("publication");
+
+        const hide =
+          (fm.projects || fm.publications) &&
+          !((fm.projects && isProject) || (fm.publications && isPublication));
+
+        img.classList.toggle("hide", hide);
+      });
     }
 
     projectsBtn.addEventListener("click", () => {
@@ -62,27 +77,13 @@ import { siteName } from "@layouts/Base.astro";
         toggle(publicationsBtn, "publications");
       }
     });
+
+    galleryBtn.addEventListener("click", () => {
+      galleryBtn.classList.toggle("active");
+      galleryBtn.querySelector("img")!.classList.toggle("invert");
+      const gallery = document.getElementById("galleryPanel");
+      gallery?.classList.toggle("active");
+      window.heroTransitionStart = true;
+    });
   }
 </script>
-
-<style>
-  a {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  button {
-    cursor: pointer;
-    text-transform: uppercase;
-    font-size: 1rem;
-  }
-  button:hover {
-    border: 2px solid black;
-  }
-  .active {
-    color: white;
-    background-color: black;
-  }
-</style>

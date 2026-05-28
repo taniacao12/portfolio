@@ -1,37 +1,121 @@
 # portfolio
 
-## 🚀 Project Structure
+> A clean personal portfolio website built with Astro and Tailwind CSS.
 
-Inside of your Astro project, you'll see the following folders and files:
+This project is a personal portfolio website designed to showcase professional work, projects, and skills. Built with Astro, it leverages static site generation to deliver high performance and fast load times with minimal client-side overhead.
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+The application uses Astro's file-based routing system with pages organized under the src/pages directory, including a primary index.astro landing page. Tailwind CSS is integrated to provide a utility-first styling system, enabling rapid design iterations directly within Astro component files.
+
+It is ideal for developers and creators who need a lightweight, easily customizable web presence that can be built and deployed statically to any modern hosting provider.
+
+## ✨ Key Features
+
+- **🚀 Astro File-Based Routing** — Organizes application pages and routes automatically based on files placed in the src/pages directory.
+- **🎨 Tailwind CSS Integration** — Provides rapid, utility-first styling natively integrated into Astro components.
+- **📦 Static Asset Management** — Serves static images and media assets directly from the public directory.
+- **⚙️ Production Build Pipelines** — Includes predefined scripts to build and preview the optimized static build locally before deployment.
+
+## 🎯 Use Cases
+
+- Deploying a personal developer portfolio to showcase software projects and resumes.
+- Creating a lightweight, content-focused landing page using static site generation.
+- Bootstrapping a fast Astro-based web application with pre-configured Tailwind CSS styling.
+
+## 🛠️ Tech Stack
+
+**Frontend:**
+
+![Astro](https://img.shields.io/badge/Astro-BC52EE?style=for-the-badge&logo=astro&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+
+**Tools & Build:**
+
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white) ![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)
+
+**DevOps:**
+
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+
+## ⚡ Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/taniacao12/portfolio.git
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the dev server
+npm run dev
+
+# 4. Open your browser
+# Visit `http://localhost:4321` (or the port specified in your console).
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 📦 Key Dependencies
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```
+@tailwindcss/vite: ^4.2.2
+astro: ^6.1.3
+tailwindcss: ^4.2.2
+```
 
-Any static assets, like images, can be placed in the `public/` directory.
+## 🚀 Available Scripts
 
-## 🧞 Commands
+- **dev** — `npm run dev`
+- **build** — `npm run build`
+- **preview** — `npm run preview`
+- **astro** — `npm run astro`
 
-All commands are run from the root of the project, from a terminal:
+## 📁 Project Structure
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+```
+.
+├── astro.config.mjs
+├── package.json
+├── public
+│   ├── codecheck
+│   │   └── Icon.png
+│   ├── deathandrevival
+│   │   ├── Church 1.jpg
+│   │   ├── Church 2.jpg
+│   │   ├── Landscape 1.jpg
+│   │   └── Landscape 2.jpg
+│   ├── favicon.ico
+│   ├── favicon.svg
+│   ├── rainbowschool
+│   │   └── Church 2.jpg
+│   └── scripts
+│       └── HeroCanvas.js
+├── src
+│   ├── components
+│   │   ├── Footer.astro
+│   │   ├── Header.astro
+│   │   └── HeroCanvas.astro
+│   ├── layouts
+│   │   ├── Base.astro
+│   │   ├── Project.astro
+│   │   └── Publication.astro
+│   ├── pages
+│   │   ├── index.astro
+│   │   ├── projects
+│   │   │   ├── chelseatimberlibrary.astro
+│   │   │   ├── deathandrevival.astro
+│   │   │   ├── gardencentral.astro
+│   │   │   ├── goquest.astro
+│   │   │   ├── lensintothefuture.astro
+│   │   │   └── rainbowschool.astro
+│   │   └── publications
+│   │       └── codecheck.astro
+│   ├── scripts
+│   │   └── GetContent.ts
+│   └── styles
+│       └── global.css
+└── tsconfig.json
+```
 
-## 👀 Want to learn more?
+## 🛠️ Development Setup
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+### Node.js / JavaScript
+1. Install [Node.js](https://nodejs.org/) (v18+ recommended)
+2. Install dependencies: `npm install` (or `yarn` / `pnpm install` / `bun install`)
+3. Start the dev server: see the **Quick Start** above

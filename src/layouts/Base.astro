@@ -19,10 +19,11 @@ export const siteName = `${author}.`;
 <html lang="en-US">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <link rel="stylesheet" href="https://use.typekit.net/lrv4mja.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>{title} | {siteName}</title>
     <meta name="description" content={description} />
@@ -44,13 +45,28 @@ export const siteName = `${author}.`;
     <meta name="twitter:description" content={description} />
   </head>
 
-  <body class="flex min-h-screen flex-col">
+  <body class="stack">
     <Header />
 
-    <main class="flex-1">
+    <main>
       <slot />
     </main>
 
     <Footer />
   </body>
 </html>
+
+<script>
+  window.addEventListener("load", () => {
+    const main = document.querySelector("main");
+    const mainHeight = main?.clientHeight;
+    // console.log("main height:", mainHeight);
+
+    if (mainHeight !== undefined) {
+      document.documentElement.style.setProperty(
+        "--main-height",
+        `${mainHeight}px`,
+      );
+    }
+  });
+</script>

@@ -1,0 +1,70 @@
+---
+import { GetProjects, GetPublications } from "@scripts/script.ts";
+
+const projects = GetProjects();
+const publications = GetPublications();
+// console.log("projects:", projects);
+// console.log("publications:", publications);
+---
+
+<div class="gallery row-tight">
+  <div class="siding left">H</div>
+  <div class="images stack">
+    {
+      projects.map((p) => (
+        <img src={p.coverImage} alt={p.title} class="project" />
+      ))
+    }
+    {
+      publications.map((p) => (
+        <img src={p.coverImage} alt={p.title} class="publication" />
+      ))
+    }
+  </div>
+  <div class="siding right">H</div>
+</div>
+
+<style>
+  .gallery {
+    position: relative;
+    display: flex;
+    flex: 1 0 0;
+    /* height: var(--main-height); */
+    min-height: 0;
+    scrollbar-width: none;
+    overflow: hidden;
+    background: black;
+    color: white;
+  }
+
+  .gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .siding {
+    display: flex;
+    width: 10%;
+    height: 100%;
+    overflow: hidden;
+    align-items: center;
+  }
+
+  .images {
+    width: 80%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .images img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .images img.hide {
+    display: none;
+  }
+</style>

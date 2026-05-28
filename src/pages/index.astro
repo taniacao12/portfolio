@@ -1,6 +1,7 @@
 ---
 import Base from "@layouts/Base.astro";
-import HeroCanvas from "@components/HeroCanvas.astro";
+import HeroCanvas from "@components/HeroCanvas/HeroCanvas.astro";
+import GalleryPanel from "@components/GalleryPanel.astro";
 ---
 
 <Base
@@ -9,24 +10,27 @@ import HeroCanvas from "@components/HeroCanvas.astro";
 	coverImage="/favicon.ico"
 	coverImageAlt="Tania Cao."
 >
-	<HeroCanvas />
+	<section class="heroLayout">
+		<HeroCanvas />
+		<aside id="galleryPanel">
+			<GalleryPanel />
+		</aside>
+	</section>
+
+	<script>
+		const params = new URLSearchParams(window.location.search);
+		const filter = params.get("filter");
+
+		if (filter === "projects") {
+			window.filterMode.projects = true;
+			document.getElementById("projectsBtn")?.classList.add("active");
+		}
+
+		if (filter === "publications") {
+			window.filterMode.publications = true;
+			document.getElementById("publicationsBtn")?.classList.add("active");
+		}
+
+		history.replaceState({}, "", "/");
+	</script>
 </Base>
-
-<script>
-	const params = new URLSearchParams(window.location.search);
-	const filter = params.get("filter");
-
-	if (filter === "projects") {
-		// @ts-ignore
-		window.filterMode.projects = true;
-		document.getElementById("projectsBtn")?.classList.add("active");
-	}
-
-	if (filter === "publications") {
-		// @ts-ignore
-		window.filterMode.publications = true;
-		document.getElementById("publicationsBtn")?.classList.add("active");
-	}
-
-	history.replaceState({}, "", "/");
-</script>
