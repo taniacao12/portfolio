@@ -4,7 +4,7 @@ import { siteName } from "@layouts/Base.astro";
 
 <nav>
   <a href="/" class="brand row">
-    <img src="/favicon.svg" alt={siteName} class="logo invert" />
+    <img src="/Favicon Black.svg" alt={siteName} class="logo" />
     {siteName}
   </a>
 
@@ -13,77 +13,19 @@ import { siteName } from "@layouts/Base.astro";
       <button id="projectsBtn">Projects</button>
       <button id="publicationsBtn">Publications</button>
     </div>
-    <button id="galleryBtn">
-      <img class="icon" src="https://img.icons8.com/ios/100/movie--v1.png" />
-    </button>
+    <script src="@scripts/filter.ts"></script>
+
+    <label class="inputIcon">
+      <input type="checkbox" id="themeToggle" class="toggle" />
+      <span class="thumb">
+        <img
+          id="themeIcon"
+          class="icon invert"
+          src="https://img.icons8.com/ios/100/sun--v3.png"
+          alt="theme icon"
+        />
+      </span>
+    </label>
+    <script src="@scripts/theme.ts"></script>
   </div>
 </nav>
-
-<script>
-  window.filterMode = {
-    projects: false,
-    publications: false,
-  };
-  window.heroTransitionStart = false;
-
-  const projectsBtn = document.getElementById(
-    "projectsBtn",
-  )! as HTMLButtonElement;
-  const publicationsBtn = document.getElementById(
-    "publicationsBtn",
-  )! as HTMLButtonElement;
-  const galleryBtn = document.getElementById(
-    "galleryBtn",
-  )! as HTMLButtonElement;
-
-  if (!projectsBtn || !publicationsBtn) {
-    console.error("Filter buttons not found in DOM");
-  } else {
-    function toggle(btn: HTMLButtonElement, key: "projects" | "publications") {
-      const isActive = btn.classList.contains("active");
-
-      // update filter state
-      window.filterMode[key] = !isActive;
-      btn.classList.toggle("active");
-
-      // always read fresh filter state
-      const fm = window.filterMode;
-      const images = document.querySelectorAll(".images img");
-
-      images.forEach((img) => {
-        const isProject = img.classList.contains("project");
-        const isPublication = img.classList.contains("publication");
-
-        const hide =
-          (fm.projects || fm.publications) &&
-          !((fm.projects && isProject) || (fm.publications && isPublication));
-
-        img.classList.toggle("hide", hide);
-      });
-    }
-
-    projectsBtn.addEventListener("click", () => {
-      if (window.location.pathname !== "/") {
-        window.location.href = "/?filter=projects";
-      } else {
-        toggle(projectsBtn, "projects");
-      }
-    });
-
-    publicationsBtn.addEventListener("click", () => {
-      if (window.location.pathname !== "/") {
-        window.location.href = "/?filter=publications";
-      } else {
-        toggle(publicationsBtn, "publications");
-      }
-    });
-
-    galleryBtn.addEventListener("click", () => {
-      galleryBtn.classList.toggle("active");
-      galleryBtn.querySelector("img")!.classList.toggle("invert");
-      const gallery = document.getElementById("galleryPanel");
-      gallery?.classList.toggle("active");
-      window.heroTransitionStart = true;
-    });
-  }
-</script>

@@ -6,9 +6,12 @@
     "paths": {
       "@components/*": ["./src/components/*"],
       "@layouts/*": ["./src/layouts/*"],
+      "@pages/*": ["./src/pages/*"],
       "@projects/*": ["./src/pages/projects/*"],
       "@publications/*": ["./src/pages/publications/*"],
       "@scripts/*": ["./src/scripts/*"],
+      "@styles/*": ["./src/styles/*"],
+      // "@utils/*": ["./scripts/*"],
     }
   }
 }

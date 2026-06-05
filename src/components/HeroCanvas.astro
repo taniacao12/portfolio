@@ -1,31 +1,18 @@
 ---
-import { GetProjects, GetPublications } from "@scripts/script.ts";
-
-const projects = GetProjects();
-const publications = GetPublications();
-// console.log("projects:", projects);
-// console.log("publications:", publications);
+import { projects, publications } from "../pages/index.astro";
 ---
 
-<div class="heroCanvasContainer">
+<div id="heroCanvasContainer" class="canvasContainer">
   <canvas id="heroCanvas"></canvas>
   <a id="linkOverlay"></a>
 </div>
 
 <script type="module" define:vars={{ projects, publications }}>
-  import { InitHeroCanvas } from "/scripts/HeroCanvas.js";
+  import { InitHeroCanvas } from "/scripts/herocanvas.js";
   InitHeroCanvas({ projects, publications });
 </script>
 
 <style>
-  .heroCanvasContainer {
-    position: relative;
-    display: flex;
-    flex: 1 0 0;
-    height: 100%;
-    min-height: 0;
-  }
-
   #heroCanvas {
     display: block;
     width: 100%;

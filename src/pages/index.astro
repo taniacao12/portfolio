@@ -1,7 +1,13 @@
 ---
+import { GetProjects, GetPublications } from "@scripts/script.ts";
 import Base from "@layouts/Base.astro";
 import HeroCanvas from "@components/HeroCanvas.astro";
 import GalleryPanel from "@components/GalleryPanel.astro";
+
+export const projects = GetProjects();
+export const publications = GetPublications();
+// console.log("projects:", projects);
+// console.log("publications:", publications);
 ---
 
 <Base
@@ -10,27 +16,29 @@ import GalleryPanel from "@components/GalleryPanel.astro";
 	coverImage="/favicon.ico"
 	coverImageAlt="Tania Cao."
 >
-	<section class="heroLayout">
+	<section class="mainSection">
 		<HeroCanvas />
+
 		<aside id="galleryPanel">
 			<GalleryPanel />
 		</aside>
+		<script>
+			const heroCanvasContainer = document.getElementById(
+				"heroCanvasContainer",
+			)! as HTMLElement;
+			const aside = document.getElementById(
+				"galleryPanel",
+			)! as HTMLElement;
+
+			aside.addEventListener("transitionend", () => {
+				heroCanvasContainer.classList.toggle("active");
+			});
+
+			window.debug("gallery panel loaded");
+		</script>
 	</section>
-
-	<script>
-		const params = new URLSearchParams(window.location.search);
-		const filter = params.get("filter");
-
-		if (filter === "projects") {
-			window.filterMode.projects = true;
-			document.getElementById("projectsBtn")?.classList.add("active");
-		}
-
-		if (filter === "publications") {
-			window.filterMode.publications = true;
-			document.getElementById("publicationsBtn")?.classList.add("active");
-		}
-
-		history.replaceState({}, "", "/");
-	</script>
 </Base>
+
+<script>
+	window.debug("base loaded");
+</script>

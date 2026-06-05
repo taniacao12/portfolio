@@ -1,5 +1,5 @@
 ---
-import "../styles/global.css";
+import "@styles/global.css";
 import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 
@@ -15,14 +15,15 @@ export const author = "Tania Cao";
 export const siteName = `${author}.`;
 ---
 
-<!doctype html>
 <html lang="en-US">
   <head>
+    <script src="@scripts/init.ts"></script>
+
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="/Favicon Black.svg" />
+    <link rel="icon" href="/Favicon Black.ico" />
     <link rel="stylesheet" href="https://use.typekit.net/lrv4mja.css" />
 
     <title>{title} | {siteName}</title>
@@ -50,23 +51,97 @@ export const siteName = `${author}.`;
 
     <main>
       <slot />
+
+      <button id="galleryBtn">
+        <img class="icon" src="https://img.icons8.com/ios/100/movie--v1.png" />
+      </button>
+      <script>
+        const mainSections = [
+          ...document.getElementsByClassName("mainSection"),
+        ];
+        const heroCanvasContainer = document.getElementById(
+          "heroCanvasContainer",
+        )! as HTMLElement;
+        const galleryBtn = document.getElementById(
+          "galleryBtn",
+        )! as HTMLButtonElement;
+
+        galleryBtn.addEventListener("click", () => {
+          galleryBtn.classList.toggle("active");
+          const gallery = document.getElementById("galleryPanel");
+          gallery?.classList.toggle("active");
+          heroCanvasContainer.classList.toggle("active");
+          mainSections.forEach((section) => {
+            section.classList.toggle("active");
+          });
+        });
+      </script>
     </main>
+    <script>
+      window.debug("main loaded");
+    </script>
 
     <Footer />
+
+    <script>
+      window.debug("footer loaded");
+
+      window.addEventListener("load", () => {
+        const main = document.querySelector("main");
+        const mainHeight = main?.clientHeight;
+        window.debug("main height:", mainHeight);
+
+        if (mainHeight !== undefined) {
+          document.documentElement.style.setProperty(
+            "--main-height",
+            `${mainHeight}px`,
+          );
+        }
+      });
+    </script>
   </body>
 </html>
 
-<script>
-  window.addEventListener("load", () => {
-    const main = document.querySelector("main");
-    const mainHeight = main?.clientHeight;
-    // console.log("main height:", mainHeight);
+<style>
+  #galleryBtn {
+    position: absolute;
+    right: 1rem;
+    border-radius: 0.75rem 0 0 0.75rem;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+    transition: transform 0.35s ease;
+  }
 
-    if (mainHeight !== undefined) {
-      document.documentElement.style.setProperty(
-        "--main-height",
-        `${mainHeight}px`,
-      );
-    }
-  });
-</script>
+  #galleryBtn:hover {
+    border-color: black;
+  }
+
+  #galleryBtn.active {
+    border-color: black;
+    background-color: black;
+    color: white;
+    transform: translateX(-300px);
+  }
+
+  #galleryBtn.active img {
+    filter: invert(1);
+  }
+
+  html.dark #galleryBtn {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  html.dark #galleryBtn:hover {
+    border-color: white;
+  }
+
+  html.dark #galleryBtn.active {
+    border-color: white;
+    background-color: white;
+    color: black;
+  }
+
+  html.dark #galleryBtn.active img {
+    filter: none;
+  }
+</style>
