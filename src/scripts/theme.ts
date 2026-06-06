@@ -1,5 +1,8 @@
 const themeToggle = document.getElementById(
   "themeToggle",
+) as HTMLLabelElement;
+const themeButton = document.getElementById(
+  "themeButton",
 ) as HTMLInputElement;
 const themeIcon = document.getElementById(
   "themeIcon",
@@ -11,7 +14,7 @@ const dark = "https://img.icons8.com/ios/100/bright-moon--v1.png";
 // set theme based on system preference, and listen for changes in system and website theme preference
 function setTheme(theme: string) {
   document.documentElement.classList.toggle("dark", theme === "dark");
-  themeToggle.checked = theme === "dark";
+  themeButton.checked = theme === "dark";
   themeIcon.src = theme === "dark" ? dark : light;
   window.debug("theme applied:", theme);
 }
@@ -26,11 +29,11 @@ function setFavicon(theme: string) {
   ) as HTMLLinkElement;
 
   if (theme === "dark") {
-    svg.href = "/Favicon White.svg";
-    ico.href = "/Favicon White.ico";
+    svg.href = "/icons/Favicon-White.svg";
+    ico.href = "/icons/Favicon-White.ico";
   } else {
-    svg.href = "/Favicon Black.svg";
-    ico.href = "/Favicon Black.ico";
+    svg.href = "/icons/Favicon-Black.svg";
+    ico.href = "/icons/Favicon-Black.ico";
   } window.debug("favicon applied:", theme);
 }
 
@@ -61,8 +64,22 @@ defaultTheme.addEventListener("change", (e) => {
 // -----------------------------
 // User toggles theme manually
 // -----------------------------
-themeToggle.addEventListener("change", () => {
-  const newTheme = themeToggle.checked ? "dark" : "light";
+themeButton.addEventListener("change", () => {
+  const newTheme = themeButton.checked ? "dark" : "light";
   sessionStorage.setItem("theme", newTheme);
   setTheme(newTheme);
+});
+
+// -----------------------------
+// Hover animations
+// -----------------------------
+themeToggle.addEventListener("mouseenter", () => {
+  if (document.documentElement.classList.contains("dark")) {
+    themeIcon.setAttribute("src", "/icons/Moon.apng");
+  } else themeIcon.setAttribute("src", "/icons/Sun.apng");
+});
+themeToggle.addEventListener("mouseleave", () => {
+  if (document.documentElement.classList.contains("dark")) {
+    themeIcon.setAttribute("src", dark);
+  } else themeIcon.setAttribute("src", light);
 });

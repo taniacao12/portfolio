@@ -1,11 +1,14 @@
+const filterGroup = document.getElementById(
+    "filterGroup",
+)! as HTMLDivElement;
+const filterIcon = document.getElementById(
+    "filterIcon",
+)! as HTMLImageElement;
 const projectsBtn = document.getElementById(
     "projectsBtn",
 )! as HTMLButtonElement;
 const publicationsBtn = document.getElementById(
     "publicationsBtn",
-)! as HTMLButtonElement;
-const galleryBtn = document.getElementById(
-    "galleryBtn",
 )! as HTMLButtonElement;
 
 function applyFilter(
@@ -59,15 +62,28 @@ if (saved) {
 projectsBtn.addEventListener("click", () => {
     applyFilter(projectsBtn, "projects");
     // open gallery panel if not in landing page
-    if (location.pathname !== "/" && !galleryBtn.classList.contains("active")) {
-        galleryBtn.click();
+    if (location.pathname !== "/" && !searchBtn.classList.contains("active")) {
+        searchBtn.click();
     }
 });
 
 publicationsBtn.addEventListener("click", () => {
     applyFilter(publicationsBtn, "publications");
     // open gallery panel if not in landing page
-    if (location.pathname !== "/" && !galleryBtn.classList.contains("active")) {
-        galleryBtn.click();
+    if (location.pathname !== "/" && !searchBtn.classList.contains("active")) {
+        searchBtn.click();
     }
+});
+
+// -----------------------------
+// Hover animations
+// -----------------------------
+filterGroup.addEventListener("mouseenter", () => {
+    filterIcon.setAttribute("src", "/icons/Filter.apng");
+});
+filterGroup.addEventListener("mouseleave", () => {
+    filterIcon.setAttribute(
+        "src",
+        "https://img.icons8.com/ios/100/filter--v1.png",
+    );
 });

@@ -4,6 +4,8 @@ declare global {
         debug: (...args: any[]) => void;
 
         OSTheme: string;
+        scrollbarWidth: number;
+        scrollbarHeight: number;
         filterMode: {
             projects: boolean;
             publications: boolean;

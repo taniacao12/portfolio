@@ -22,23 +22,5 @@ export const publications = GetPublications();
 		<aside id="galleryPanel">
 			<GalleryPanel />
 		</aside>
-		<script>
-			const heroCanvasContainer = document.getElementById(
-				"heroCanvasContainer",
-			)! as HTMLElement;
-			const aside = document.getElementById(
-				"galleryPanel",
-			)! as HTMLElement;
-
-			aside.addEventListener("transitionend", () => {
-				heroCanvasContainer.classList.toggle("active");
-			});
-
-			window.debug("gallery panel loaded");
-		</script>
 	</section>
 </Base>
-
-<script>
-	window.debug("base loaded");
-</script>

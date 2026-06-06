@@ -1,7 +1,7 @@
 import { Node } from "./node.js";
 import { Connection, maxDist } from "./connection.js";
 
-const gallery = document.getElementById("galleryPanel");
+const aside = document.getElementById("galleryPanel");
 const canvas = document.getElementById("heroCanvas");
 const wrapper = canvas.parentElement;
 const ctx = canvas.getContext("2d");
@@ -13,6 +13,30 @@ const cellKey = (x, y) => `${x},${y}`;
 
 export function InitHeroCanvas({ projects = [], publications = [] }) {
   let lastTime = performance.now();
+
+  function resize() {
+    const body = document.querySelector("body");
+    const nav = document.querySelector("nav");
+    const footer = document.querySelector("footer");
+    const bodyStyle = getComputedStyle(body);
+    const navStyle = getComputedStyle(nav);
+    const footerStyle = getComputedStyle(footer);
+    const hScrollbar =
+      (document.documentElement.scrollWidth > window.innerWidth) *
+      window.scrollbarHeight;
+
+    wrapper.style.height =
+      (window.innerHeight -
+        2 * parseFloat(bodyStyle.paddingTop) -
+        2 * parseFloat(bodyStyle.gap) -
+        parseFloat(navStyle.height) -
+        parseFloat(footerStyle.height) -
+        hScrollbar) + "px";
+
+    canvas.width = wrapper.clientWidth;
+    canvas.height = wrapper.clientHeight;
+    debug("canvas size:", canvas.width, canvas.height);
+  }
 
   function resolveCollisions() {
     const grid = new Map();
@@ -99,9 +123,7 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
   }
 
   // initialize canvas
-  canvas.width = wrapper.clientWidth;
-  canvas.height = wrapper.clientHeight;
-  debug("canvas size:", canvas.width, canvas.height);
+  resize();
 
   // initialize nodes
   let nodes = [];
@@ -125,6 +147,11 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
   requestAnimationFrame(animate);
 
   // event listeners
+  const resizeObserver = new ResizeObserver(() => {
+    resize();
+  });
+  resizeObserver.observe(wrapper);
+
   setInterval(() => {
     const ambientNodes = nodes.filter(n => n.type === "ambient" && !n.dying);
     if (ambientNodes.length < maxAmbient) {
@@ -141,7 +168,6 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
     }
   }, ambientPulseInterval);
 
-
   const linkOverlay = document.getElementById("linkOverlay");
   let active = null;
 
@@ -150,10 +176,7 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
 
     let closest = null, closestDist = Infinity;
     for (const n of nodes) {
-      let [x, y] = n.getCoordinates();
-      if (gallery.classList.contains("active")) {
-        [x, y] = n.getScaledCoordinates();
-      }
+      const [x, y] = n.getCoordinates();
       const d = Math.hypot(mx - x, my - y);
       if (d < closestDist) (closestDist = d), (closest = n);
     }
@@ -167,13 +190,8 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
     active = closest && closest.href && closest.hovered ? closest : null;
 
     if (active) {
-      let [x, y] = active.getCoordinates();
+      const [x, y] = active.getCoordinates();
       const r = active.getRadius();
-
-      if (gallery.classList.contains("active")) {
-        [x, y] = active.getScaledCoordinates();
-      }
-
       linkOverlay.href = active.href;
       linkOverlay.style.display = "block";
       linkOverlay.style.left = `${x - r}px`;
@@ -198,5 +216,9 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
         }
       }
     }
+  });
+
+  aside.addEventListener("transitionend", () => {
+    wrapper.classList.toggle("active");
   });
 }

@@ -110,10 +110,6 @@ export class Node {
     return [this.nx * canvas.width, this.ny * canvas.height];
   }
 
-  getScaledCoordinates() {
-    return [this.nx * wrapper.clientWidth, this.ny * wrapper.clientHeight];
-  }
-
   getRadius() {
     return this.nr * Math.min(canvas.width, canvas.height);
   }
@@ -172,15 +168,6 @@ export class Node {
 
     const path = getEllipsePath(r, r);
     ctx.translate(x, y);
-    const gallery = document.getElementById("galleryPanel");
-    if (gallery.classList.contains("active") ||
-      wrapper.classList.contains("active")
-    ) {
-      ctx.scale(
-        canvas.width / wrapper.clientWidth,
-        canvas.height / wrapper.clientHeight
-      );
-    }
     ctx.clip(path);
 
     const isDark = document.documentElement.classList.contains("dark");
