@@ -18,7 +18,7 @@ declare global {
     }
 }
 
-export function format(files: Record<string, any>) {
+function format(files: Record<string, any>) {
     return Object.values(files).map((mod) => ({
         href: mod.url,
         title: mod.frontmatter.title,

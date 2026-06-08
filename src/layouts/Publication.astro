@@ -18,19 +18,22 @@ const props = Astro.props;
   coverImage={props.coverImage}
   coverImageAlt={props.coverImageAlt}
 >
-  <header>
-    <h1>{props.title}</h1>
-    <h2>{props.subtitle}</h2>
-  </header>
+  <div class="stack">
+    <header>
+      <h1>{props.title}</h1>
+      <h2>{props.subtitle}</h2>
+    </header>
 
-  <article>
-    <aside>
-      <h3>Date \</h3>
-      <p>{props.date}</p>
-    </aside>
-
-    <slot />
-  </article>
+    <article>
+      <aside>
+        <h3>Date \</h3>
+        <p>{props.date}</p>
+      </aside>
+      <div class="stack">
+        <slot />
+      </div>
+    </article>
+  </div>
 </Base>
 
 <style>

@@ -1,13 +1,6 @@
 ---
-import { GetProjects, GetPublications } from "@scripts/script.ts";
+import { projects, publications } from "@scripts/works.ts";
 import Base from "@layouts/Base.astro";
-import HeroCanvas from "@components/HeroCanvas.astro";
-import GalleryPanel from "@components/GalleryPanel.astro";
-
-export const projects = GetProjects();
-export const publications = GetPublications();
-// console.log("projects:", projects);
-// console.log("publications:", publications);
 ---
 
 <Base
@@ -16,11 +9,39 @@ export const publications = GetPublications();
 	coverImage="/favicon.ico"
 	coverImageAlt="Tania Cao."
 >
-	<section class="mainSection">
-		<HeroCanvas />
+	<div id="heroCanvasContainer" class="canvasContainer">
+		<canvas id="heroCanvas"></canvas>
+		<a id="linkOverlay"></a>
+	</div>
 
-		<aside id="galleryPanel">
-			<GalleryPanel />
-		</aside>
-	</section>
+	<script type="module" define:vars={{ projects, publications }}>
+		import { InitHeroCanvas } from "/scripts/herocanvas.js";
+		InitHeroCanvas({ projects, publications });
+	</script>
+
+	<style>
+		#heroCanvas {
+			display: block;
+			width: 100%;
+		}
+
+		#linkOverlay {
+			position: absolute;
+			display: none;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			pointer-events: none;
+		}
+	</style>
 </Base>
+
+<style>
+	html {
+		overflow-y: hidden;
+	}
+
+	html::-webkit-scrollbar:vertical {
+		display: none;
+	}
+</style>

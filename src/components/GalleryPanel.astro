@@ -1,70 +1,24 @@
 ---
-import { projects, publications } from "../pages/index.astro";
+import { projects, publications } from "@scripts/works.ts";
 ---
 
-<div class="gallery row-tight">
-  <div class="siding left">H</div>
-  <div class="images stack">
-    {
-      publications.map((p) => (
-        <img src={p.coverImage} alt={p.title} class="publication" />
-      ))
-    }
-    {
-      projects.slice(0,2).map((p) => (
-        <img src={p.coverImage} alt={p.title} class="project" />
-      ))
-    }
+<aside id="galleryPanel" class="gallery hideScroll">
+  <div class="imageContainer row tight">
+    <div class="images row">
+      {
+        publications.map((p) => (
+          <a href={p.href} class="publication">
+            <img src={p.coverImage} alt={p.title} class="publication" />
+          </a>
+        ))
+      }
+      {
+        projects.map((p) => (
+          <a href={p.href} class="project">
+            <img src={p.coverImage} alt={p.title} class="project" />
+          </a>
+        ))
+      }
+    </div>
   </div>
-  <div class="siding right">H</div>
-</div>
-
-<style>
-  .gallery {
-    /* position: relative; */
-    /* display: flex; */
-    /* flex: 1 0 0; */
-    /* height: 100%; */
-    /* min-height: 0; */
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: black;
-    color: white;
-  }
-
-  .gallery::-webkit-scrollbar {
-    display: none;
-  }
-
-  html.dark .gallery {
-    background: white;
-    color: black;
-  }
-
-  .siding {
-    /* display: flex; */
-    width: 10%;
-    /* height: 100%; */
-    /* align-items: center; */
-  }
-
-  .images {
-    width: 240px;
-    /* max-width: 100%; */
-    /* height: 100%; */
-    /* min-height: 0; */
-  }
-
-  .images img {
-    /* display: block; */
-    /* flex: 1; */
-    aspect-ratio: 9 / 6;
-    width: 240px;
-    /* max-width: 100%; */
-    object-fit: cover;
-  }
-
-  .images img.hide {
-    display: none;
-  }
-</style>
+</aside>

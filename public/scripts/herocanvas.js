@@ -1,7 +1,10 @@
 import { Node } from "./node.js";
 import { Connection, maxDist } from "./connection.js";
 
-const aside = document.getElementById("galleryPanel");
+const headerMenu = document.getElementById("headerMenu");
+const filterBtn = document.getElementById("filterBtn");
+const projectsBtn = document.getElementById("projectsBtn");
+const galleryPanel = document.getElementById("galleryPanel");
 const canvas = document.getElementById("heroCanvas");
 const wrapper = canvas.parentElement;
 const ctx = canvas.getContext("2d");
@@ -15,26 +18,21 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
   let lastTime = performance.now();
 
   function resize() {
-    const body = document.querySelector("body");
     const nav = document.querySelector("nav");
     const footer = document.querySelector("footer");
-    const bodyStyle = getComputedStyle(body);
-    const navStyle = getComputedStyle(nav);
-    const footerStyle = getComputedStyle(footer);
+    const main = document.querySelector("main");
+    const galleryPanel = document.getElementById("galleryPanel");
     const hScrollbar =
       (document.documentElement.scrollWidth > window.innerWidth) *
       window.scrollbarHeight;
 
-    wrapper.style.height =
-      (window.innerHeight -
-        2 * parseFloat(bodyStyle.paddingTop) -
-        2 * parseFloat(bodyStyle.gap) -
-        parseFloat(navStyle.height) -
-        parseFloat(footerStyle.height) -
-        hScrollbar) + "px";
-
     canvas.width = wrapper.clientWidth;
-    canvas.height = wrapper.clientHeight;
+    canvas.height = window.innerHeight -
+      nav.offsetHeight -
+      footer.offsetHeight -
+      parseFloat(getComputedStyle(main).gap) -
+      galleryPanel.offsetHeight -
+      hScrollbar;
     debug("canvas size:", canvas.width, canvas.height);
   }
 
@@ -150,7 +148,7 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
   const resizeObserver = new ResizeObserver(() => {
     resize();
   });
-  resizeObserver.observe(wrapper);
+  resizeObserver.observe(wrapper.parentElement);
 
   setInterval(() => {
     const ambientNodes = nodes.filter(n => n.type === "ambient" && !n.dying);
@@ -167,6 +165,33 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
       amb[Math.floor(Math.random() * amb.length)].dying = true;
     }
   }, ambientPulseInterval);
+
+  document.querySelectorAll("#galleryPanel a").forEach(a => {
+    a.addEventListener("mouseenter", () => {
+      // clear canvas hover state
+      nodes.forEach(n => {
+        n.hovered = false;
+        n.targetNR = n.baseNR;
+      });
+      
+      const href = new URL(a.href).pathname;
+      const node = nodes.find(n => n.href === href);
+      if (node) {
+        node.hovered = true;
+        node.targetNR = node.baseNR * 3;
+      }
+    });
+
+    a.addEventListener("mouseleave", () => {
+      const href = new URL(a.href).pathname;
+      const node = nodes.find(n => n.href === href);
+      if (node) {
+        node.hovered = false;
+        node.targetNR = node.baseNR;
+      }
+    });
+  });
+
 
   const linkOverlay = document.getElementById("linkOverlay");
   let active = null;
@@ -218,7 +243,7 @@ export function InitHeroCanvas({ projects = [], publications = [] }) {
     }
   });
 
-  aside.addEventListener("transitionend", () => {
+  galleryPanel.addEventListener("transitionend", () => {
     wrapper.classList.toggle("active");
   });
 }

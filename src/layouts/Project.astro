@@ -86,7 +86,9 @@ const props = Astro.props;
       }
     </aside>
 
-    <slot />
+    <div class="stack">
+      <slot />
+    </div>
   </article>
 </Base>
 
@@ -101,7 +103,7 @@ const props = Astro.props;
     align-items: center;
     overflow: auto;
   }
-  
+
   aside {
     display: block;
     float: right;

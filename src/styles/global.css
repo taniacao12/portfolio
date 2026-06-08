@@ -2,24 +2,56 @@
 
 /* --- Root Layout --- */
 html {
-    max-width: 100vw;
+    max-width: 100dvw;
+    overflow: auto;
     background-color: white;
     color: black;
-    overflow: auto;
 }
 
-body {
-    min-width: min-content;
-    padding: 1rem;
+html.dark {
+    background-color: black;
+    color: white;
+}
+
+/* --- Layout Utilities --- */
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.tight {
+    gap: 0;
+}
+
+.relaxed {
+    gap: 2rem;
 }
 
 /* --- Global Structural Elements --- */
+body {
+    min-width: min-content;
+    min-height: 100dvh;
+    font-family: mrs-eaves-roman-lining;
+}
+
 nav,
 footer {
     min-width: max-content;
-    text-transform: uppercase;
+    padding: 1rem;
     font-family: video, serif;
     font-weight: 600;
+    text-transform: uppercase;
+}
+
+footer {
+    margin-top: auto;
 }
 
 .brand {
@@ -33,26 +65,85 @@ footer {
     margin-left: auto;
 }
 
-main,
-section {
-    display: flex;
-    flex: 1 1 auto;
+.gallery {
+    margin-bottom: auto;
+    width: 100%;
+    max-width: 100dvw;
+    height: 0;
+    background: black;
+    color: white;
+    overflow: auto;
+    transition: height 0.35s ease;
 }
 
-.mainSection.active {
-    column-gap: 1rem;
+html.dark .gallery {
+    background: white;
+    color: black;
 }
 
-.mainSection aside {
-    /* flex-shrink: 0; */
-    width: 0;
-    /* height: 100%; */
-    /* min-height: 0; */
-    transition: width 0.35s ease;
+.gallery.active {
+    height: 184px;
 }
 
-.mainSection aside.active {
-    width: 300px;
+.gallery,
+.gallery>* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.gallery::-webkit-scrollbar,
+.gallery>*::-webkit-scrollbar {
+    display: none;
+}
+
+.gallery .imageContainer {
+    position: relative;
+    min-width: max-content;
+    height: 100%;
+    overflow: auto;
+}
+
+.gallery .imageContainer::before,
+.gallery .imageContainer::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 16px;
+    background-image: repeating-linear-gradient(to right,
+            white 0,
+            white 12px,
+            transparent 12px,
+            transparent 28px);
+}
+
+.gallery .imageContainer::before {
+    top: 10px;
+}
+
+.gallery .imageContainer::after {
+    bottom: 10px;
+}
+
+.gallery .images {
+    height: 100%;
+    padding: 2rem 0.75rem;
+    gap: 0.75rem;
+}
+
+.gallery .images a {
+    height: 120px;
+    aspect-ratio: 3 / 2;
+}
+
+.gallery .images a img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery .images a.hide {
+    display: none;
 }
 
 .canvasContainer {
@@ -61,35 +152,17 @@ section {
     flex: 1 0 0;
 }
 
-/* --- Layout Utilities --- */
-.stack {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+header,
+article {
+    padding-right: 1rem;
+    padding-left: 1rem;
 }
 
-.stack-tight {
+section {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.row-tight {
-    display: flex;
-    align-items: center;
-    gap: 0;
-}
-
-.row-relax {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
+    flex: 1 1 auto;
+    padding-right: 1rem;
+    padding-left: 1rem;
 }
 
 /* --- Media Elements --- */
@@ -101,6 +174,11 @@ section {
 .icon {
     width: 24px;
     height: 24px;
+}
+
+html.dark .logo,
+html.dark .icon {
+    filter: invert(1);
 }
 
 /* --- Buttons --- */
@@ -115,8 +193,16 @@ button {
     transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
+html.dark button {
+    border-color: white
+}
+
 button:hover {
     background-color: lightgray;
+}
+
+html.dark button:hover {
+    background-color: gray;
 }
 
 button.active {
@@ -125,8 +211,18 @@ button.active {
     color: white;
 }
 
+html.dark button.active {
+    border-color: white;
+    background-color: white;
+    color: black;
+}
+
 button.active img {
     filter: invert(1);
+}
+
+html.dark button.active img {
+    filter: invert(0);
 }
 
 /* --- Button Group --- */
@@ -164,6 +260,10 @@ input {
     cursor: pointer;
 }
 
+html.dark input {
+    border-color: white;
+}
+
 .inputIcon {
     position: relative;
     display: inline-flex;
@@ -192,6 +292,10 @@ input {
     transition: transform 0.3s;
 }
 
+html.dark .inputIcon .icon {
+    filter: none;
+}
+
 .toggle:checked:before {
     background-color: white;
     transform: translateX(1.875rem);
@@ -199,45 +303,4 @@ input {
 
 .toggle:checked+.thumb .icon {
     transform: translate(1.875rem, -50%);
-}
-
-/* --- Dark Mode --- */
-/* --- Root Layout --- */
-html.dark {
-    background-color: black;
-    color: white;
-}
-
-/* --- Media Elements --- */
-html.dark .logo,
-html.dark .icon {
-    filter: invert(1);
-}
-
-/* --- Buttons --- */
-html.dark button {
-    border-color: white
-}
-
-html.dark button:hover {
-    background-color: gray;
-}
-
-html.dark button.active {
-    border-color: white;
-    background-color: white;
-    color: black;
-}
-
-html.dark button.active img {
-    filter: invert(0);
-}
-
-/* --- Inputs --- */
-html.dark input {
-    border-color: white;
-}
-
-html.dark .inputIcon .icon {
-    filter: none;
 }

@@ -36,7 +36,7 @@ function applyFilter(
             (fm.projects || fm.publications) &&
             !((fm.projects && isProject) || (fm.publications && isPublication));
 
-        img.classList.toggle("hide", hide);
+        img.parentElement?.classList.toggle("hide", hide);
     });
 
     window.debug("applied", key, "filter");

@@ -1,4 +1,4 @@
-const mainSections = [...document.getElementsByClassName("mainSection")];
+const mains = document.querySelectorAll("main");
 const heroCanvasContainer = document.getElementById(
   "heroCanvasContainer",
 )! as HTMLElement;
@@ -13,9 +13,9 @@ searchBtn.addEventListener("click", () => {
   searchBtn.classList.toggle("active");
   const gallery = document.getElementById("galleryPanel");
   gallery?.classList.toggle("active");
-  heroCanvasContainer.classList.toggle("active");
-  mainSections.forEach((section) => {
-    section.classList.toggle("active");
+  heroCanvasContainer?.classList.toggle("active");
+  mains.forEach((main) => {
+    main.classList.toggle("tight");
   });
 });
 
