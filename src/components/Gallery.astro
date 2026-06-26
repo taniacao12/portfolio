@@ -1,0 +1,50 @@
+---
+interface Props {
+  gallery: any;
+}
+const { gallery } = Astro.props;
+
+function format(files: Record<string, any>) {
+  return Object.keys(files).map((key) => ({
+    src: "/" + key.split("/").slice(2).join("/"),
+    alt: key.split("/")[4].split(".")[0],
+  }));
+}
+
+const imgs = format(gallery);
+// console.log("imgs:", imgs);
+---
+
+<section class="stack">
+  <h3>Gallery</h3>
+
+  <div class="grid auto-fill">
+    {
+      imgs.map((img: any) => (
+        <img class="galleryImg" src={img.src} alt={img.alt} />
+      ))
+    }
+  </div>
+
+  <div id="galleryModal" class="stack modal hide">
+    <div class="row modalContent">
+      <button id="modalPrev" class="modalPrev invert">
+        <img
+          class="icon"
+          src="https://img.icons8.com/ios-filled/100/chevron-left.png"
+        />
+      </button>
+      <div class="stack">
+        <img id="modalImg" class="modalImg" />
+        <h3 id="modalCaption" class="modalCaption"></h3>
+      </div>
+      <button id="modalNext" class="modalNext invert">
+        <img
+          class="icon"
+          src="https://img.icons8.com/ios-filled/100/chevron-right.png"
+        />
+      </button>
+    </div>
+  </div>
+  <script type="module" src="/scripts/modal.js" defer></script>
+</section>

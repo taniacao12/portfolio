@@ -1,7 +1,7 @@
-const canvas = document.getElementById("heroCanvas");
-const ctx = canvas.getContext("2d");
-export const maxDist = 150;
+export const MAXDIST = 150;
 
+const canvas = document.querySelector(".canvasContainer canvas");
+const ctx = canvas.getContext("2d");
 
 function getDistance(nodeA, nodeB) {
   const [ax, ay] = nodeA.getCoordinates();
@@ -9,47 +9,65 @@ function getDistance(nodeA, nodeB) {
   return Math.hypot(ax - bx, ay - by);
 }
 
+const ColorCache = new Map();
+function getColor(isAmbient, color, dimmed, isDark, alpha) {
+  const key = `${isAmbient}|${color}|${dimmed}|${isDark}|${alpha}`;
+  if (ColorCache.has(key)) return ColorCache.get(key);
+
+  let c;
+  if (isAmbient) {
+    c = isDark
+      ? (dimmed ? 280 - color : 250 - color)
+      : color;
+  } else c = isDark ? 255 : 0;
+  const fill = `rgba(${c},${c},${c},${alpha})`;
+  ColorCache.set(key, fill);
+  return fill;
+}
+
+function getStroke(grad, fade, nodeA, nodeB, isDark) {
+  const alphaA = Math.max(0.2, nodeA.depthAlpha * fade);
+  const alphaB = Math.max(0.2, nodeB.depthAlpha * fade);
+  const colorA = getColor(nodeA.isAmbient, nodeA.color, nodeA.dimmed, isDark, alphaA);
+  const colorB = getColor(nodeB.isAmbient, nodeB.color, nodeB.dimmed, isDark, alphaB);
+  grad.addColorStop(0, colorA);
+  grad.addColorStop(1, colorB);
+  return grad;
+}
+
 export class Connection {
   constructor(nodeA, nodeB) {
     this.nodeA = nodeA;
     this.nodeB = nodeB;
-    this.depth = Math.min(nodeA.depth || 0, nodeB.depth || 0);
+    this.depth = Math.min(nodeA.depth, nodeB.depth);
     this.dist = getDistance(nodeA, nodeB);
-    this.visible = this.dist < maxDist;
-    this.dead = false;
+    this.visible = this.dist < MAXDIST;
+    this.isDead = false;
 
     nodeA.addConnection(this);
     nodeB.addConnection(this);
   }
 
   update() {
-    const { nodeA: A, nodeB: B } = this;
-    if (A.dead || B.dead) return (this.dead = this.visible = false);
+    if (this.nodeA.isDead || this.nodeB.isDead) {
+      return (this.isDead = this.visible = false);
+    }
 
-    this.dist = getDistance(A, B);
-    this.visible = this.dist < maxDist;
-    this.depth = Math.min(A.depth || 0, B.depth || 0);
+    this.dist = getDistance(this.nodeA, this.nodeB);
+    this.visible = this.dist < MAXDIST;
   }
 
   draw() {
     if (!this.visible) return;
 
+    const isDark = document.documentElement.classList.contains("dark");
     const [ax, ay] = this.nodeA.getCoordinates();
     const [bx, by] = this.nodeB.getCoordinates();
-    const fade = 1 - this.dist / maxDist;
 
-    const aA = Math.max(0.2, this.nodeA.getLineAlpha() * fade);
-    const aB = Math.max(0.2, this.nodeB.getLineAlpha() * fade);
-
-    const dark = document.documentElement.classList.contains("dark");
-    const gA = dark ? 250 - this.nodeA.lineGray : this.nodeA.lineGray;
-    const gB = dark ? 250 - this.nodeB.lineGray : this.nodeB.lineGray;
-
+    const fade = 1 - this.dist / MAXDIST;
     const grad = ctx.createLinearGradient(ax, ay, bx, by);
-    grad.addColorStop(0, `rgba(${gA},${gA},${gA},${aA})`);
-    grad.addColorStop(1, `rgba(${gB},${gB},${gB},${aB})`);
+    ctx.strokeStyle = getStroke(grad, fade, this.nodeA, this.nodeB, isDark);
 
-    ctx.strokeStyle = grad;
     ctx.lineWidth =
       (0.8 + Math.pow(this.depth, 1.5) * 2) *
       (Math.min(canvas.width, canvas.height) / 1000);

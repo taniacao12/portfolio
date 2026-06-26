@@ -1,13 +1,14 @@
 ---
-import Project from "@layouts/Project.astro";
+import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
+    order: 5,
     title: "Rainbow School",
-    coverImage: "/deathandrevival/Landscape 2.jpg",
+    coverImage: "/rainbowschool/Axon NW.jpg",
 };
 ---
 
-<Project
+<Work
     title={frontmatter.title}
     subtitle="A Journey Through Light, Instinct, and Play"
     description="Rooted in the belief that learning emerges through play, this kindergarten invites children to engage with space through curiosity, challenge, and subconscious exploration. The design began with two conceptual seeds: a blindfolded drawing exercise and the folklore of Red Riding Hood. The resulting drawing revealed a woven rope-like section, inspiring a massing strategy of overlapping cubes that form spatial volumes. The landscape echoes this logic, composed of square platforms and connective slits that encourage movement and discovery."
@@ -15,12 +16,13 @@ export const frontmatter = {
     coverImageAlt={frontmatter.title}
     course="Architectural Studio II"
     courseDescription="Learning by Playing or A Kindergartener's Approach to Architecture"
-    instructor="Daniel Horowitz"
+    advisor="Daniel Horowitz"
     collaborators=""
     date="Spring 2020"
     location=""
+    gallery={import.meta.glob("/public/rainbowschool/gallery/*")}
 >
-    <section class="main stack">
+    <section class="stack">
         <p>
             Rooted in the belief that learning emerges through play, this
             kindergarten invites children to engage with space through
@@ -32,6 +34,10 @@ export const frontmatter = {
             of square platforms and connective slits that encourage movement and
             discovery.
         </p>
+        <img
+            src="/rainbowschool/Blind-folded Drawing.jpg"
+            alt="Analysis of Blind-folded Drawing"
+        />
         <p>
             Drawing from lesser-known versions of Red Riding Hood—where the
             protagonist undergoes trials before reaching her end—the school
@@ -41,6 +47,10 @@ export const frontmatter = {
             challenges and supports, offering a playground of layered cognition
             where instinct precedes logic. flourish once more.
         </p>
+        <img
+            src="/rainbowschool/Program & Section.jpg"
+            alt="Program & Section"
+        />
         <p>
             Throughout the day, colored glazing filters sunlight into shifting
             patterns of light and shadow. Polygonal windows cast vibrant shapes
@@ -50,193 +60,4 @@ export const frontmatter = {
             language that speaks to children before they learn to name it.
         </p>
     </section>
-
-    <section>
-        <div class="container">
-            <div
-                class="image"
-                style="grid-column: 1 / span 2; grid-row: 1 / span 2;"
-            >
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Blind-folded Drawing"
-                    class="image"
-                />
-                <div class="overlay">Blind-folded Drawing</div>
-            </div>
-
-            <div class="image" style="grid-column: 1; grid-row: 3;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Sectioned Drawing"
-                />
-                <div class="overlay">Sectioned Drawing</div>
-            </div>
-
-            <div class="image" style="grid-column: 2; grid-row: 3;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Annotated Drawing"
-                />
-                <div class="overlay">Annotated Drawing</div>
-            </div>
-
-            <div style="grid-column: 3; grid-row: 1 / span 3; height: 100%;">
-                <div
-                    class="container"
-                    style="grid-template-columns: auto; grid-template-rows: 1fr 1fr; height: 100%;"
-                >
-                    <div class="image">
-                        <img
-                            src="/rainbowschool/Church 2.jpg"
-                            alt="Little Red Riding Hood"
-                        />
-                        <div class="overlay">Little Red Riding Hood</div>
-                    </div>
-                    <div class="image">
-                        <img
-                            src="/rainbowschool/Church 2.jpg"
-                            alt="Three Figures"
-                        />
-                        <div class="overlay">Three Figures</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <br />
-
-    <section>
-        <div class="container">
-            <div class="image" style="grid-column: 1; grid-row: 1;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Level 1"
-                    class="image"
-                />
-                <div class="overlay">Level 1</div>
-            </div>
-
-            <div class="image" style="grid-column: 2; grid-row: 1;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Level 2"
-                    class="image"
-                />
-                <div class="overlay">Level 2</div>
-            </div>
-
-            <div class="image" style="grid-column: 3; grid-row: 1;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Level 3"
-                    class="image"
-                />
-                <div class="overlay">Level 3</div>
-            </div>
-
-            <div class="image" style="grid-column: 1; grid-row: 2;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Level 4"
-                    class="image"
-                />
-                <div class="overlay">Level 4</div>
-            </div>
-
-            <div class="image" style="grid-column: 2; grid-row: 2;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Level 5"
-                    class="image"
-                />
-                <div class="overlay">Level 5</div>
-            </div>
-
-            <div class="image" style="grid-column: 3; grid-row: 2;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Level 6"
-                    class="image"
-                />
-                <div class="overlay">Level 6</div>
-            </div>
-        </div>
-    </section>
-
-    <br />
-
-    <section>
-        <div class="container">
-            <div class="image" style="grid-column: 1; grid-row: 1;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Section 1"
-                    class="image"
-                />
-                <div class="overlay">Section 1</div>
-            </div>
-
-            <div class="image" style="grid-column: 2; grid-row: 1;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Section 2"
-                    class="image"
-                />
-                <div class="overlay">Section 2</div>
-            </div>
-
-            <div class="image" style="grid-column: 3; grid-row: 1;">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Section 3"
-                    class="image"
-                />
-                <div class="overlay">Section 3</div>
-            </div>
-        </div>
-    </section>
-
-    <br />
-
-    <section>
-        <div class="slideshow">
-            <div class="slide fade">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Section 3"
-                    style="width:100%"
-                />
-            </div>
-            <div class="slide fade">
-                <img
-                    src="/rainbowschool/Church 2.jpg"
-                    alt="Section 3"
-                    style="width:100%"
-                />
-            </div>
-        </div>
-    </section>
-</Project>
-
-<script>
-    let slideIndex = 0;
-    showSlides();
-
-    function showSlides() {
-        let i;
-        let slides = document.getElementsByClassName("slide");
-        for (i = 0; i < slides.length; i++) {
-            // @ts-ignore
-            slides[i].style.display = "none";
-        }
-        slideIndex++;
-        if (slideIndex > slides.length) {
-            slideIndex = 1;
-        }
-        // @ts-ignore
-        slides[slideIndex - 1].style.display = "block";
-        setTimeout(showSlides, 4000);
-    }
-</script>
+</Work>

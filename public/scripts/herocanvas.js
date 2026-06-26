@@ -1,249 +1,311 @@
 import { Node } from "./node.js";
-import { Connection, maxDist } from "./connection.js";
+import { Connection, MAXDIST } from "./connection.js";
 
-const headerMenu = document.getElementById("headerMenu");
-const filterBtn = document.getElementById("filterBtn");
-const projectsBtn = document.getElementById("projectsBtn");
-const galleryPanel = document.getElementById("galleryPanel");
-const canvas = document.getElementById("heroCanvas");
-const wrapper = canvas.parentElement;
+const AMBIENT_DENSITY = 15000;
+const AMBIENT_PULSE_INTERVAL = 1500;
+
+const canvasContainer = document.querySelector(".canvasContainer");
+const canvas = document.querySelector(".canvasContainer canvas");
+const linkOverlay = document.querySelector(".canvasContainer a");
 const ctx = canvas.getContext("2d");
 
-const ambientDensity = 15000;
-const ambientPulseInterval = 1500;
+let paused = false;
+let nodes = [];
+let connections = [];
+let activeNode = null;
+let lastTime = performance.now();
 
 const cellKey = (x, y) => `${x},${y}`;
 
-export function InitHeroCanvas({ projects = [], publications = [] }) {
-  let lastTime = performance.now();
+// -------------------------------------
+// Canvas / Layout
+// -------------------------------------
+function resizeCanvas() {
+  if (canvas.width == canvasContainer.parentElement.clientWidth &&
+    canvas.height == canvasContainer.clientHeight) return;
+  // console.log(
+  //   canvas.width,
+  //   canvas.height,
+  //   parseFloat(getComputedStyle(canvasContainer.parentElement).width),
+  //   canvasContainer.clientHeight,
+  // );
+  canvas.width = parseFloat(getComputedStyle(canvasContainer.parentElement).width);
+  canvas.height = canvasContainer.clientHeight;
+  // console.log("canvas size:", canvas.width, canvas.height);
+}
 
-  function resize() {
-    const nav = document.querySelector("nav");
-    const footer = document.querySelector("footer");
-    const main = document.querySelector("main");
-    const galleryPanel = document.getElementById("galleryPanel");
-    const hScrollbar =
-      (document.documentElement.scrollWidth > window.innerWidth) *
-      window.scrollbarHeight;
+// -------------------------------------
+// Collision Resolution
+// -------------------------------------
+function resolveCollisions() {
+  const grid = new Map();
 
-    canvas.width = wrapper.clientWidth;
-    canvas.height = window.innerHeight -
-      nav.offsetHeight -
-      footer.offsetHeight -
-      parseFloat(getComputedStyle(main).gap) -
-      galleryPanel.offsetHeight -
-      hScrollbar;
-    debug("canvas size:", canvas.width, canvas.height);
+  // bucket nodes into grid cells
+  for (const n of nodes) {
+    const [x, y] = n.getCoordinates();
+    const cx = Math.floor(x / MAXDIST);
+    const cy = Math.floor(y / MAXDIST);
+    const key = cellKey(cx, cy);
+
+    if (!grid.has(key)) grid.set(key, []);
+    grid.get(key).push({ node: n, p: { x, y, r: n.radius } });
   }
 
-  function resolveCollisions() {
-    const grid = new Map();
-    const dist = maxDist;
+  const offsets = [
+    [0, 0], [1, 0], [0, 1], [1, 1],
+    [-1, 0], [0, -1], [-1, -1], [1, -1], [-1, 1]
+  ];
 
-    for (const n of nodes) {
-      const [x, y] = n.getCoordinates();
-      const cx = Math.floor(x / dist);
-      const cy = Math.floor(y / dist);
-      const key = cellKey(cx, cy);
-      if (!grid.has(key)) grid.set(key, []);
-      grid.get(key).push({ node: n, p: { x, y, r: n.getRadius() } });
-    }
+  for (const [key, A] of grid) {
+    const [cx, cy] = key.split(",").map(Number);
 
-    const offsets = [
-      [0, 0], [1, 0], [0, 1], [1, 1],
-      [-1, 0], [0, -1], [-1, -1], [1, -1], [-1, 1]
-    ];
+    for (const [ox, oy] of offsets) {
+      const B = grid.get(cellKey(cx + ox, cy + oy));
+      if (!B) continue;
 
-    for (const [key, A] of grid) {
-      const [cx, cy] = key.split(",").map(Number);
+      for (let i = 0; i < A.length; i++) {
+        const a = A[i];
+        const start = key === cellKey(cx + ox, cy + oy) ? i + 1 : 0;
 
-      for (const [ox, oy] of offsets) {
-        const B = grid.get(cellKey(cx + ox, cy + oy));
-        if (!B) continue;
+        for (let j = start; j < B.length; j++) {
+          const b = B[j];
+          const na = a.node, nb = b.node;
 
-        for (let i = 0; i < A.length; i++) {
-          const a = A[i];
-          const start = key === cellKey(cx + ox, cy + oy) ? i + 1 : 0;
+          if (na.isAmbient || nb.isAmbient) continue;
 
-          for (let j = start; j < B.length; j++) {
-            const b = B[j];
-            const na = a.node, nb = b.node;
-            if (na.type === "ambient" || nb.type === "ambient") continue;
+          const dx = b.p.x - a.p.x;
+          const dy = b.p.y - a.p.y;
+          const dist = Math.hypot(dx, dy);
+          const minD = a.p.r + b.p.r;
 
-            const dx = b.p.x - a.p.x;
-            const dy = b.p.y - a.p.y;
-            const dist = Math.hypot(dx, dy);
-            const minD = a.p.r + b.p.r;
+          if (dist < minD && dist > 0) {
+            const nx = dx / dist, ny = dy / dist;
+            const push = (minD - dist) / 2;
 
-            if (dist < minD && dist > 0) {
-              const nx = dx / dist, ny = dy / dist;
-              const push = (minD - dist) / 2;
-              const px = (nx * push) / canvas.width;
-              const py = (ny * push) / canvas.height;
+            na.nx -= (nx * push) / canvas.width;
+            na.ny -= (ny * push) / canvas.height;
+            nb.nx += (nx * push) / canvas.width;
+            nb.ny += (ny * push) / canvas.height;
 
-              na.nx -= px; na.ny -= py;
-              nb.nx += px; nb.ny += py;
+            const rvx = nb.vx - na.vx;
+            const rvy = nb.vy - na.vy;
+            const dot = rvx * nx + rvy * ny;
 
-              const rvx = nb.vx - na.vx;
-              const rvy = nb.vy - na.vy;
-              const dot = rvx * nx + rvy * ny;
-
-              if (dot < 0) {
-                const imp = (2 * dot) / 2;
-                na.vx += imp * nx; na.vy += imp * ny;
-                nb.vx -= imp * nx; nb.vy -= imp * ny;
-              }
+            if (dot < 0) {
+              const imp = (2 * dot) / 2;
+              na.vx += imp * nx;
+              na.vy += imp * ny;
+              nb.vx -= imp * nx;
+              nb.vy -= imp * ny;
             }
           }
         }
       }
     }
   }
+}
 
-  function animate(now) {
-    const dt = (now - lastTime) / 16.67;
-    lastTime = now;
+// -------------------------------------
+// Update / Draw Pipeline
+// -------------------------------------
+function updateGeometry(dt) {
+  for (const g of nodes) g.update(dt);
+  for (const g of connections) g.update(dt);
+}
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function sortGeometry() {
+  const geo = [...connections, ...nodes];
+  geo.sort((a, b) => {
+    if (a.depth !== b.depth) return a.depth - b.depth;
+    if (a.depth !== 1) {
+      const aIsNode = a instanceof Node;
+      const bIsNode = b instanceof Node;
+      if (aIsNode !== bIsNode) return aIsNode ? -1 : 1;
+      return 0;
+    } return b.order - a.order;
+  });
+  return geo;
+}
 
-    // Depth sort (back to front)
-    const geo = [...connections, ...nodes];
-    geo.forEach((g) => g.update());
-    geo.sort((a, b) => (a.depth || 0) - (b.depth || 0));
-    geo.forEach((g) => g.draw());
+function drawGeometry(sorted) {
+  for (const g of sorted) g.draw();
+}
 
-    resolveCollisions();
+// -------------------------------------
+// Ambient Node Birth / Death
+// -------------------------------------
+function spawnAmbientNode() {
+  const newNode = new Node();
+  for (let i = 0; i < nodes.length - 1; i++) {
+    connections.push(new Connection(nodes[i], newNode));
+  } nodes.push(newNode);
+}
 
-    nodes = nodes.filter((n) => !n.dead);
-    connections = connections.filter((c) => !c.dead);
+function killRandomAmbientNode() {
+  const ambientNodes = nodes.filter(n => n.isAmbient && !n.dying);
+  if (ambientNodes.length === 0) return;
 
-    requestAnimationFrame(animate);
+  const victim = ambientNodes[Math.floor(Math.random() * ambientNodes.length)];
+  victim.dying = true;
+}
+
+function ambientPulse(maxAmbient) {
+  const BIRTH_RATIO = 0.4;
+  const KILL_RATIO = 0.4;
+
+  const ambientNodes = nodes.filter(n => n.isAmbient && !n.dying);
+  const ratio = ambientNodes.length / maxAmbient;
+  const birthChance = Math.max(0, (1 - ratio) * BIRTH_RATIO);
+  const killChance = Math.max(0, ratio * KILL_RATIO);
+  const nothingChance = 1 - birthChance - killChance;
+
+  const roll = Math.random();
+  if (roll < nothingChance) return;
+  if (roll < nothingChance + birthChance) return spawnAmbientNode();
+  killRandomAmbientNode();
+}
+
+// -------------------------------------
+// Hover Logic
+// -------------------------------------
+function handleDirectoryHover(a) {
+  a.addEventListener("mouseenter", () => {
+    nodes.forEach(n => {
+      n.hovered = false;
+      n.targetRadius = n.baseRadius;
+    });
+
+    const href = new URL(a.href).pathname;
+    const node = nodes.find(n => n.href === href);
+    if (node) {
+      node.hovered = true;
+      node.targetRadius = node.baseRadius * 3;
+    }
+  });
+
+  a.addEventListener("mouseleave", () => {
+    const href = new URL(a.href).pathname;
+    const node = nodes.find(n => n.href === href);
+    if (node) {
+      node.hovered = false;
+      node.targetRadius = node.baseRadius;
+    }
+  });
+}
+
+function handleCanvasHover(e) {
+  const mx = e.offsetX, my = e.offsetY;
+
+  let closest = null, closestDist = Infinity;
+  for (const n of nodes) {
+    const [x, y] = n.getCoordinates();
+    const d = Math.hypot(mx - x, my - y);
+    if (d < closestDist) {
+      closestDist = d;
+      closest = n;
+    }
   }
 
-  // initialize canvas
-  resize();
+  nodes.forEach(n => {
+    const h = n === closest && closestDist < n.radius;
+    n.hovered = h;
+    n.targetRadius = h ? n.baseRadius * 3 : n.baseRadius;
+  });
 
-  // initialize nodes
-  let nodes = [];
-  const ambientCount = Math.round((canvas.width * canvas.height) / ambientDensity);
+  activeNode = closest && closest.href && closest.hovered ? closest : null;
+
+  if (activeNode) {
+    const [x, y] = activeNode.getCoordinates();
+    const r = activeNode.radius;
+    linkOverlay.href = activeNode.href;
+    linkOverlay.style.display = "block";
+    linkOverlay.style.left = `${x - r}px`;
+    linkOverlay.style.top = `${y - r}px`;
+    linkOverlay.style.width = linkOverlay.style.height = `${r * 2}px`;
+    linkOverlay.style.pointerEvents = "auto";
+    linkOverlay.style.cursor = "pointer";
+  } else {
+    linkOverlay.style.display = "none";
+    linkOverlay.style.pointerEvents = "none";
+  }
+}
+
+// -------------------------------------
+// Click Navigation
+// -------------------------------------
+function handleCanvasClick(e) {
+  const mx = e.offsetX, my = e.offsetY;
+
+  for (const n of nodes) {
+    if (!n.href) continue;
+
+    const [x, y] = n.getCoordinates();
+    if (Math.hypot(mx - x, my - y) < n.radius) {
+      location.href = n.href;
+      break;
+    }
+  }
+}
+
+// -------------------------------------
+// Animation Loop
+// -------------------------------------
+function animate(now) {
+  if (paused) return;
+
+  let dt = (now - lastTime) / 16.67;
+  dt = Math.min(Math.max(dt, 0), 10);
+  lastTime = now;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  updateGeometry(dt);
+  const geo = sortGeometry();
+  drawGeometry(geo);
+  resolveCollisions();
+
+  nodes = nodes.filter(n => !n.isDead);
+  connections = connections.filter(c => !c.isDead);
+
+  requestAnimationFrame(animate);
+}
+
+// -------------------------------------
+// Initialization
+// -------------------------------------
+export function InitHeroCanvas({ works = [] }) {
+  resizeCanvas();
+
+  const ambientCount = Math.round((canvas.width * canvas.height) / AMBIENT_DENSITY);
   const maxAmbient = parseInt(ambientCount * 1.5);
-  debug("max ambient node count:", maxAmbient);
-  debug("initial ambient node count:", ambientCount);
+  // console.log("max ambient node count:", maxAmbient);
+  // console.log("initial ambient node count:", ambientCount);
 
-  [...projects, ...publications].forEach((d, i) =>
-    nodes.push(new Node(i < projects.length ? "project" : "publication", d))
-  );
-  for (let i = 0; i < ambientCount; i++) nodes.push(new Node("ambient"));
+  works.forEach(work => nodes.push(new Node(work.type, work)));
+  for (let i = 0; i < ambientCount; i++) nodes.push(new Node());
 
-  // initialize connections
-  let connections = [];
   for (let i = 0; i < nodes.length; i++)
     for (let j = i + 1; j < nodes.length; j++)
       connections.push(new Connection(nodes[i], nodes[j]));
 
-  // initiate animation
   requestAnimationFrame(animate);
+  setInterval(ambientPulse(maxAmbient), AMBIENT_PULSE_INTERVAL);
 
-  // event listeners
-  const resizeObserver = new ResizeObserver(() => {
-    resize();
+  const ro = new ResizeObserver(() => {
+    clearTimeout(window._resizeTimeout);
+    window._resizeTimeout = setTimeout(resizeCanvas, 20);
   });
-  resizeObserver.observe(wrapper.parentElement);
+  ro.observe(canvasContainer);
 
-  setInterval(() => {
-    const ambientNodes = nodes.filter(n => n.type === "ambient" && !n.dying);
-    if (ambientNodes.length < maxAmbient) {
-      if (Math.random() < 0.5) {
-        const newNode = new Node("ambient");
-        for (let i = 0; i < nodes.length - 1; i++) {
-          connections.push(new Connection(nodes[i], newNode));
-        } nodes.push(newNode);
-      }
-    } else {
-      const amb = nodes.filter((n) => n.type === "ambient" && !n.dying);
-      if (!amb.length) return;
-      amb[Math.floor(Math.random() * amb.length)].dying = true;
-    }
-  }, ambientPulseInterval);
-
-  document.querySelectorAll("#galleryPanel a").forEach(a => {
-    a.addEventListener("mouseenter", () => {
-      // clear canvas hover state
-      nodes.forEach(n => {
-        n.hovered = false;
-        n.targetNR = n.baseNR;
-      });
-      
-      const href = new URL(a.href).pathname;
-      const node = nodes.find(n => n.href === href);
-      if (node) {
-        node.hovered = true;
-        node.targetNR = node.baseNR * 3;
-      }
-    });
-
-    a.addEventListener("mouseleave", () => {
-      const href = new URL(a.href).pathname;
-      const node = nodes.find(n => n.href === href);
-      if (node) {
-        node.hovered = false;
-        node.targetNR = node.baseNR;
-      }
-    });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      paused = false;
+      lastTime = performance.now();
+      requestAnimationFrame(animate);
+    } else paused = true;
   });
 
-
-  const linkOverlay = document.getElementById("linkOverlay");
-  let active = null;
-
-  canvas.addEventListener("mousemove", function (e) {
-    let mx = e.offsetX, my = e.offsetY;
-
-    let closest = null, closestDist = Infinity;
-    for (const n of nodes) {
-      const [x, y] = n.getCoordinates();
-      const d = Math.hypot(mx - x, my - y);
-      if (d < closestDist) (closestDist = d), (closest = n);
-    }
-
-    nodes.forEach((n) => {
-      const h = n === closest && closestDist < n.getRadius();
-      n.hovered = h;
-      n.targetNR = h ? n.baseNR * 3 : n.baseNR;
-    });
-
-    active = closest && closest.href && closest.hovered ? closest : null;
-
-    if (active) {
-      const [x, y] = active.getCoordinates();
-      const r = active.getRadius();
-      linkOverlay.href = active.href;
-      linkOverlay.style.display = "block";
-      linkOverlay.style.left = `${x - r}px`;
-      linkOverlay.style.top = `${y - r}px`;
-      linkOverlay.style.width = linkOverlay.style.height = `${r * 2}px`;
-      linkOverlay.style.pointerEvents = "auto";
-      linkOverlay.style.cursor = "pointer";
-    } else {
-      linkOverlay.style.display = "none";
-      linkOverlay.style.pointerEvents = "none";
-    }
-  });
-
-  canvas.addEventListener("click", function (e) {
-    const mx = e.offsetX, my = e.offsetY;
-    for (const n of nodes) {
-      if (n.href) {
-        const [x, y] = n.getCoordinates();
-        if (Math.hypot(mx - x, my - y) < n.getRadius()) {
-          location.href = n.href;
-          break;
-        }
-      }
-    }
-  });
-
-  galleryPanel.addEventListener("transitionend", () => {
-    wrapper.classList.toggle("active");
-  });
+  document.querySelectorAll(".directory a").forEach(handleDirectoryHover);
+  canvas.addEventListener("mousemove", handleCanvasHover);
+  canvas.addEventListener("click", handleCanvasClick);
 }

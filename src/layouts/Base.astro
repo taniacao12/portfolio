@@ -1,7 +1,7 @@
 ---
 import "@styles/global.css";
-import Header from "@components/Header.astro";
-import GalleryPanel from "@components/GalleryPanel.astro";
+import Nav from "@components/Nav.astro";
+import Directory from "@components/Directory.astro";
 import Footer from "@components/Footer.astro";
 
 interface Props {
@@ -11,14 +11,15 @@ interface Props {
   coverImageAlt: string;
 }
 const { title, description, coverImage, coverImageAlt } = Astro.props;
-
-export const author = "Tania Cao";
-export const siteName = `${author}.`;
+const author = "Tania Cao";
+const siteName = `${author}.`;
 ---
 
 <html lang="en-US">
   <head>
-    <script src="@scripts/init.ts"></script>
+    <script type="module">
+      import "/scripts/theme.js";
+    </script>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,21 +49,24 @@ export const siteName = `${author}.`;
   </head>
 
   <body class="stack tight">
-    <Header />
+    <Nav siteName={siteName} />
 
-    <main class="stack tight">
-      <GalleryPanel />
+    <main class="stretch stack tight">
+      <Directory />
 
       <slot />
     </main>
 
-    <Footer />
+    <Footer siteName={siteName} />
   </body>
 </html>
 
-<script>
-  const html = document.querySelector("html")! as HTMLElement;
-  const body = document.querySelector("body")! as HTMLBodyElement;
-  window.debug(html.clientWidth, html.offsetWidth, html.scrollWidth);
-  window.debug(body.clientWidth, body.offsetWidth, body.scrollWidth);
+<script type="module">
+  import "/scripts/scrollbar.js";
+  import "/scripts/filter.js";
+  import "/scripts/timeline.js";
+  import { setMinMainWidth } from "/scripts/utils.js";
+
+  setMinMainWidth();
+  document.documentElement.style.visibility = "visible";
 </script>

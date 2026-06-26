@@ -4,6 +4,8 @@
   "exclude": ["dist"],
   "compilerOptions": {
     "paths": {
+      "@public/*": ["./public/*"],
+      "@utils/*": ["./public/scripts/*"],
       "@components/*": ["./src/components/*"],
       "@layouts/*": ["./src/layouts/*"],
       "@pages/*": ["./src/pages/*"],

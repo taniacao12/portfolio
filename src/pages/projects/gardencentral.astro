@@ -1,13 +1,14 @@
 ---
-import Project from "@layouts/Project.astro";
+import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
+    order: 7,
     title: "Garden Central",
-    coverImage: "/deathandrevival/Landscape 1.jpg",
+    coverImage: "/gardencentral/Eye Level Night.jpg",
 };
 ---
 
-<Project
+<Work
     title={frontmatter.title}
     subtitle="Architecture as a Scaffold for Everyday Rituals"
     description=""
@@ -15,12 +16,13 @@ export const frontmatter = {
     coverImageAlt={frontmatter.title}
     course="Architectural Studio IV"
     courseDescription="Mixed-Use Housing"
-    instructor="Adam Dayem"
+    advisor="Adam Dayem"
     collaborators="Yi Liu"
     date="Spring 2021"
     location="Troy, New York"
+    gallery={import.meta.glob("/public/gardencentral/gallery/*")}
 >
-    <section class="main">
+    <section class="stack">
         <p>
             Set within the historic shell of St. Mary's Church, this adaptive
             reuse project blurs the boundaries between residence and commerce. A
@@ -30,7 +32,6 @@ export const frontmatter = {
             workshops for artists and lecturers, upper-level galleries for
             public art, and a rooftop garden for cultivation and community.
         </p>
-        <br />
         <p>
             Designed to foster a self-sustaining ecosystem, the building invites
             low-income residents to live, work, and play within a shared
@@ -41,5 +42,8 @@ export const frontmatter = {
             spaces. The architecture becomes a framework for unity—where talent,
             greenery, and public life converge.
         </p>
+        <img src="/gardencentral/Exploded Axon.jpg" alt="Exploded Axon" />
+        <img src="/gardencentral/Unit Drawings.jpg" alt="Unit Drawings" />
+        <img src="/gardencentral/Plans & Section.jpg" alt="Plans & Section" />
     </section>
-</Project>
+</Work>

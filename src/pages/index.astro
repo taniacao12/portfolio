@@ -1,6 +1,9 @@
 ---
-import { projects, publications } from "@scripts/works.ts";
+import { getWorks } from "@scripts/script.ts";
 import Base from "@layouts/Base.astro";
+
+const works = getWorks();
+// console.log("works:", works);
 ---
 
 <Base
@@ -9,39 +12,40 @@ import Base from "@layouts/Base.astro";
 	coverImage="/favicon.ico"
 	coverImageAlt="Tania Cao."
 >
-	<div id="heroCanvasContainer" class="canvasContainer">
-		<canvas id="heroCanvas"></canvas>
-		<a id="linkOverlay"></a>
+	<div id="canvasContainer" class="stretch canvasContainer">
+		<canvas></canvas>
+		<a></a>
 	</div>
-
-	<script type="module" define:vars={{ projects, publications }}>
-		import { InitHeroCanvas } from "/scripts/herocanvas.js";
-		InitHeroCanvas({ projects, publications });
-	</script>
-
-	<style>
-		#heroCanvas {
-			display: block;
-			width: 100%;
-		}
-
-		#linkOverlay {
-			position: absolute;
-			display: none;
-			inset: 0;
-			width: 100%;
-			height: 100%;
-			pointer-events: none;
-		}
-	</style>
 </Base>
 
+<script type="module" define:vars={{ works }}>
+	import { setMinBodyHeight } from "/scripts/utils.js";
+	import { InitHeroCanvas } from "/scripts/herocanvas.js";
+
+	setMinBodyHeight();
+	window.addEventListener("resize", setMinBodyHeight);
+
+	InitHeroCanvas({ works });
+</script>
+
 <style>
-	html {
-		overflow-y: hidden;
+	.canvasContainer {
+		position: relative;
+		display: flex;
+		flex: 1 0 0;
+		height: 100%;
 	}
 
-	html::-webkit-scrollbar:vertical {
+	.canvasContainer canvas {
+		width: 100%;
+	}
+
+	.canvasContainer a {
+		position: absolute;
 		display: none;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
 	}
 </style>

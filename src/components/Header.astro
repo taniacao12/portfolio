@@ -1,57 +1,18 @@
 ---
-import { siteName } from "@layouts/Base.astro";
+interface Props {
+  coverImage: string;
+  coverImageAlt: string;
+  title: string;
+  subtitle: string;
+}
+const { coverImage, coverImageAlt, title, subtitle } = Astro.props;
 ---
 
-<nav class="row relaxed">
-  <a href="/" class="brand row">
-    <img src="/icons/Favicon-Black.svg" alt={siteName} class="logo" />
-    {siteName}
-  </a>
+<header class="stack tight">
+  <img src={coverImage} alt={coverImageAlt} />
 
-  <div id="headerMenu" class="menu row">
-    <div id="filterGroup" class="buttonGroup row tight">
-      <button id="filterBtn">
-        <img
-          id="filterIcon"
-          class="icon"
-          src="https://img.icons8.com/ios/100/filter--v1.png"
-        />
-      </button>
-      <button id="projectsBtn">Projects</button>
-      <button id="publicationsBtn">Publications</button>
-    </div>
-    <script src="@scripts/filter.ts"></script>
-
-    <button id="searchBtn">
-      <img
-        id="searchIcon"
-        class="icon"
-        src="https://img.icons8.com/ios/100/search--v1.png"
-      />
-    </button>
-    <script src="@scripts/search.ts"></script>
-
-    <label id="themeToggle" class="inputIcon">
-      <input type="checkbox" id="themeButton" class="toggle" />
-      <span class="thumb">
-        <img
-          id="themeIcon"
-          class="icon invert"
-          src="https://img.icons8.com/ios/100/sun--v3.png"
-          alt="theme icon"
-        />
-      </span>
-    </label>
-    <script src="@scripts/theme.ts"></script>
+  <div>
+    <h1>{title}</h1>
+    <h2>{subtitle}</h2>
   </div>
-</nav>
-
-<style>
-  #filterBtn:hover {
-    background: transparent;
-  }
-
-  #filterBtn {
-    cursor: auto;
-  }
-</style>
+</header>

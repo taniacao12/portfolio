@@ -1,11 +1,14 @@
 ---
-import { siteName } from "@layouts/Base.astro";
+interface Props {
+  siteName: string;
+}
+const { siteName } = Astro.props;
 ---
 
 <footer class="row relaxed">
-  © 2026 {siteName} All Rights Reserved.
+  <h4>© 2026 {siteName} All Rights Reserved.</h4>
 
-  <div class="menu row">
+  <div class="row left">
     <a
       class="icon group"
       href="https://www.linkedin.com/in/taniacao/"
@@ -13,12 +16,12 @@ import { siteName } from "@layouts/Base.astro";
       rel="noopener noreferrer"
     >
       <img
-        src="https://img.icons8.com/ios/100/linkedin.png"
         class="block group-hover:hidden"
+        src="https://img.icons8.com/ios/100/linkedin.png"
       />
       <img
-        src="https://img.icons8.com/ios-filled/100/linkedin.png"
         class="hidden group-hover:block"
+        src="https://img.icons8.com/ios-filled/100/linkedin.png"
       />
     </a>
 
@@ -29,12 +32,12 @@ import { siteName } from "@layouts/Base.astro";
       rel="noopener noreferrer"
     >
       <img
-        src="https://img.icons8.com/ios/100/new-post--v1.png"
         class="block group-hover:hidden"
+        src="https://img.icons8.com/ios/100/new-post--v1.png"
       />
       <img
-        src="https://img.icons8.com/ios-filled/100/new-post.png"
         class="hidden group-hover:block"
+        src="https://img.icons8.com/ios-filled/100/new-post.png"
       />
     </a>
   </div>

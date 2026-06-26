@@ -1,13 +1,14 @@
 ---
-import Project from "@layouts/Project.astro";
+import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
+    order: 3,
     title: "Lens Into The Future",
-    coverImage: "/deathandrevival/Landscape 2.jpg",
+    coverImage: "/lensintothefuture/Spring.png",
 };
 ---
 
-<Project
+<Work
     title={frontmatter.title}
     subtitle="Material Experimentation for a Low-Carbon Future"
     description=""
@@ -15,12 +16,13 @@ export const frontmatter = {
     coverImageAlt={frontmatter.title}
     course="Architectural Studio V"
     courseDescription="Innovation Center"
-    instructor="Matthew Lopez"
+    advisor="Matthew Lopez"
     collaborators="Sarah Lowrey"
     date="Summer 2022"
     location="Troy, New York"
+    gallery={import.meta.glob("/public/lensintothefuture/gallery/*")}
 >
-    <section class="main">
+    <section class="stack">
         <p>
             Inspired by the urgency of climate action, this project explores
             movement and precision as guiding forces in the design of a new
@@ -29,6 +31,7 @@ export const frontmatter = {
             experimentation, development, and economic growth within the city of
             Troy.
         </p>
+        <img src="/lensintothefuture/Ground Floor.jpg" alt="Ground Floor" />
         <p>
             The building's envelope initiates the first line of inquiry. Its
             walls are constructed from biocrete, an emerging concrete
@@ -38,6 +41,10 @@ export const frontmatter = {
             experiment—one that could inform future approaches to low-carbon
             construction.
         </p>
+        <img
+            src="/lensintothefuture/Preliminary Study.jpg"
+            alt="Preliminary Study"
+        />
         <p>
             The form of the center emerges from a study of rules and
             abstraction. Three primary geometries—the lens of a binocular, the
@@ -48,6 +55,7 @@ export const frontmatter = {
             to navigate between research zones, engage with areas of interest,
             and explore unfamiliar territories within the campus.
         </p>
+        <img src="/lensintothefuture/Site Plan.jpg" alt="Site Plan" />
         <p>
             Through its material experimentation, geometric rigor, and
             choreographed movement, Lens Into the Future imagines a biotech hub
@@ -55,4 +63,4 @@ export const frontmatter = {
             environmentally responsive design.
         </p>
     </section>
-</Project>
+</Work>

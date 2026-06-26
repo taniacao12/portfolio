@@ -1,0 +1,20 @@
+---
+import { getWorks } from "@scripts/script.ts";
+
+const works = getWorks();
+// console.log("works:", works);
+---
+
+<aside id="directory" class="directory">
+  <div class="imageContainer row tight">
+    <div class="images row">
+      {
+        works.map((p) => (
+          <a href={p.href} class={p.type}>
+            <img src={p.coverImage} alt={p.title} class={p.type} />
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</aside>

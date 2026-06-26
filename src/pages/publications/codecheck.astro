@@ -1,21 +1,28 @@
 ---
-import Publication from "@layouts/Publication.astro";
+import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
+    order: 1,
     title: "CodeCheck",
-    coverImage: "/codecheck/Icon.png",
+    coverImage: "/codecheck/CodeCheck.jpeg",
 };
 ---
 
-<Publication
+<Work
     title={frontmatter.title}
     subtitle="Accelerating Architectural Workflows Through Automated Code Compliance"
     description="Master's thesis exploring the intersection of architecture, urban planning, and computational design. The research focuses on developing digital tools to streamline code compliance in architectural workflows, with a case study centered on New York City's zoning regulations."
     coverImage={frontmatter.coverImage}
     coverImageAlt={frontmatter.title}
+    course="Master's Thesis"
+    courseDescription=""
+    advisor="Dennis Shelden"
+    collaborators=""
     date="Aug 2025"
+    location="New York, New York"
+    gallery={import.meta.glob("/public/codecheck/gallery/*")}
 >
-    <section class="main">
+    <section class="stack">
         <p>
             CodeCheck investigates how zoning laws, building codes, and
             regulatory processes shape the relationship between architects,
@@ -56,4 +63,4 @@ export const frontmatter = {
             >.
         </p>
     </section>
-</Publication>
+</Work>

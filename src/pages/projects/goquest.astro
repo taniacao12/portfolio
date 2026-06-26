@@ -1,13 +1,14 @@
 ---
-import Project from "@layouts/Project.astro";
+import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
+    order: 4,
     title: "Go Quest",
-    coverImage: "/deathandrevival/Landscape 2.jpg",
+    coverImage: "/goquest/Go Quest.jpg",
 };
 ---
 
-<Project
+<Work
     title={frontmatter.title}
     subtitle="A Playable Immersive Environment Exploring Spatial Logic and Sensory Interaction"
     description=""
@@ -15,12 +16,13 @@ export const frontmatter = {
     coverImageAlt={frontmatter.title}
     course="Architectural Studio VII"
     courseDescription="Inception"
-    instructor="Carla Leitao"
+    advisor="Carla Leitao"
     collaborators="Odette Gonzalez & Sarah Lowrey"
     date="Fall 2023"
     location="Troy, New York"
+    gallery={import.meta.glob("/public/goquest/gallery/*")}
 >
-    <section class="main">
+    <section class="stack">
         <p>
             Go Quest originated as an exploration of immersive space—how
             environments can shape perception, emotion, and behavior. Early
@@ -52,72 +54,66 @@ export const frontmatter = {
         </p>
     </section>
 
-    <section>
+    <section class="stack">
         <h3>Precedents and Influences</h3>
         <p>
             Three key references shaped the conceptual and experiential
             framework of Go Quest:
         </p>
-
-        <div class="gallery">
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Cinque Terre"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Borderless — Inviting Chaos</h4>
-                <p class="desc">
-                    TeamLab's Borderless introduced the idea of environments
-                    that behave independently of the user. Through projections,
-                    mirrors, and LED-driven infinity effects, the installation
-                    creates a world where elements move, react, and evolve
-                    without direct player control. This sense of boundlessness
-                    and unpredictability informed Go Quest's approach to
-                    environmental autonomy.
-                </p>
-            </div>
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Forest"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Dark Echo — Trial and Error</h4>
-                <p class="desc">
-                    Dark Echo inspired the use of darkness, sound, and discovery
-                    through action. In a world without visual cues, players
-                    navigate by producing sound that reveals spatial boundaries.
-                    This mechanic—akin to echolocation—reinforced the idea that
-                    exploration should be learned, not instructed. Go Quest
-                    adopts this philosophy by allowing players to uncover the
-                    world piece by piece.
-                </p>
-            </div>
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Northern Lights"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Monument Valley 2 — Contained Tools</h4>
-                <p class="desc">
-                    Monument Valley demonstrated the power of compact, legible
-                    stages where players experiment with tools to progress. Its
-                    clarity and controlled puzzle logic offered a counterpoint
-                    to Borderless's chaos. Go Quest positions itself between
-                    these extremes, blending unpredictability with moments of
-                    agency.
-                </p>
-            </div>
+        <div class="grid sidebar pattern">
+            <iframe
+                src="https://www.youtube.com/embed/o9LNCRZYvNQ"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+            <h4>Inviting Chaos</h4>
+            <p>
+                TeamLab's Borderless introduced the idea of environments that
+                behave independently of the user. Through projections, mirrors,
+                and LED-driven infinity effects, the installation creates a
+                world where elements move, react, and evolve without direct
+                player control. This sense of boundlessness and unpredictability
+                informed Go Quest's approach to environmental autonomy.
+            </p>
+        </div>
+        <div class="grid sidebar pattern">
+            <iframe
+                src="https://www.youtube.com/embed/t4TTuRs0BWA"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+            <h4>Trial and Error</h4>
+            <p>
+                Dark Echo inspired the use of darkness, sound, and discovery
+                through action. In a world without visual cues, players navigate
+                by producing sound that reveals spatial boundaries. This
+                mechanic—akin to echolocation—reinforced the idea that
+                exploration should be learned, not instructed. Go Quest adopts
+                this philosophy by allowing players to uncover the world piece
+                by piece.
+            </p>
+        </div>
+        <div class="grid sidebar pattern">
+            <iframe
+                src="https://www.youtube.com/embed/QH05S88nhG0"
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen></iframe>
+            <h4>Contained Tools</h4>
+            <p>
+                Monument Valley demonstrated the power of compact, legible
+                stages where players experiment with tools to progress. Its
+                clarity and controlled puzzle logic offered a counterpoint to
+                Borderless's chaos. Go Quest positions itself between these
+                extremes, blending unpredictability with moments of agency.
+            </p>
         </div>
     </section>
-    <br />
 
-    <section>
+    <section class="stack">
         <h3>From Research to Mechanics</h3>
         <p>
             The final game world is built from a field of modular box tiles that
@@ -125,68 +121,43 @@ export const frontmatter = {
             embodies a specific behavior, creating a system where interaction
             generates complexity:
         </p>
-        <div class="gallery">
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Cinque Terre"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Basic Tile</h4>
-                <p class="desc">
+        <div class="grid auto-fit">
+            <div class="stack">
+                <img src="/goquest/Basic Tile.png" alt="Basic Tile" />
+                <h4>Basic Tile</h4>
+                <p>
                     The core spatial unit; its glowing edges orient the player
                     in darkness.
                 </p>
             </div>
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Forest"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Light Tile</h4>
-                <p class="desc">
+            <div class="stack">
+                <img src="/goquest/Light Tile.png" alt="Light Tile" />
+                <h4>Light Tile</h4>
+                <p>
                     Illuminates on contact, mapping the player's path and
                     forming a spatial memory.
                 </p>
             </div>
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Northern Lights"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Trap Tile</h4>
-                <p class="desc">
+            <div class="stack">
+                <img src="/goquest/Trap Tile.png" alt="Trap Tile" />
+                <h4>Trap Tile</h4>
+                <p>
                     Vanishes when stepped on, opening a void that may cause the
                     player to fall and respawn.
                 </p>
             </div>
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Northern Lights"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Colored Tiles</h4>
-                <p class="desc">
+            <div class="stack">
+                <img src="/goquest/Colored Tiles.png" alt="Colored Tile" />
+                <h4>Colored Tiles</h4>
+                <p>
                     Encode progress through shifting hues, creating a visual
                     hierarchy tied to movement and time.
                 </p>
             </div>
-            <div class="gallery-item">
-                <img
-                    src={frontmatter.coverImage}
-                    alt="Northern Lights"
-                    width="600"
-                    height="400"
-                />
-                <h4 class="title">Reactive Tiles</h4>
-                <p class="desc">
+            <div class="stack">
+                <img src="/goquest/Reactive Tiles.png" alt="Reactive Tile" />
+                <h4>Reactive Tiles</h4>
+                <p>
                     Activate, resize, or extrude other tiles, revealing new
                     platforms and expanding the navigable world.
                 </p>
@@ -199,10 +170,10 @@ export const frontmatter = {
         </p>
     </section>
 
-    <section>
+    <section class="stack">
         <h3>Immersion and Sensory Design</h3>
-        <div>
-            <p style="display: block; width: 70%; padding-right:15px">
+        <div class="row">
+            <p>
                 Sound plays a central role in constructing immersion.
                 Atmospheric audio establishes tone, while reactive sound effects
                 respond to player movement, reinforcing the connection between
@@ -212,74 +183,60 @@ export const frontmatter = {
                 illumination, and sound transforms navigation into a sensory
                 experience rather than a purely visual one.
             </p>
-            <img
-                src={frontmatter.coverImage}
-                alt="Northern Lights"
-                style="display: block; width: 30%; padding-left:15px"
-                width="600"
-                height="400"
-            />
+            <img src="/goquest/Sound Effects.png" alt="Sound Effects" />
         </div>
     </section>
 
-    <section>
+    <section class="stack">
         <h3>Gameplay and Spatial Evolution</h3>
-        <div>
-            <p>
-                Players begin in darkness, illuminated only by a grid of tiles.
-                Each step lights the tile beneath them, creating a glowing trace
-                that records their movement. Tile functions activate on contact,
-                layering interaction over exploration. Reaching the periphery
-                triggers the first major event: the revelation of spatial bounds
-                beyond the ground plane.
-            </p>
-            <p>
-                Players begin in darkness, illuminated only by a grid of tiles.
-                Each step lights the tile beneath them, creating a glowing trace
-                that records their movement. Tile functions activate on contact,
-                layering interaction over exploration. Reaching the periphery
-                triggers the first major event: the revelation of spatial bounds
-                beyond the ground plane.
-            </p>
-            <p>
-                By the time all triggers activate, the relationship between
-                player and world has fundamentally changed. What began as a
-                predictable environment becomes a complex, shifting system that
-                challenges perception, memory, and control.
-            </p>
-        </div>
-
-        <section>
-            <h3>Immersive Presentation</h3>
-            <div>
-                <p>
-                    The final version of Go Quest was presented in the Craive
-                    Lab's 360° projection environment, allowing the game to be
-                    experienced as a spatial installation. The surrounding
-                    projections amplified the game's atmospheric qualities,
-                    immersing players in a world where sound, light, and
-                    movement enveloped them from all sides. This setting
-                    reinforced the project's origins in immersive research and
-                    demonstrated how digital environments can operate as
-                    architectural experiences.
-                </p>
-            </div>
-        </section>
-
-        <section>
-            <h3>Conclusion</h3>
-            <div>
-                <p>
-                    What began as an abstract study of dreams, emotions, and
-                    sensory immersion evolved into a fully interactive
-                    Unity-built world. Go Quest merges architectural thinking
-                    with game design, using spatial logic, behavioral systems,
-                    and sensory cues to construct an environment that unfolds
-                    through exploration. It stands as both a game and a spatial
-                    experiment—an investigation into how immersion can be
-                    designed, manipulated, and experienced.
-                </p>
-            </div>
-        </section>
+        <p>
+            Players begin in darkness, illuminated only by a grid of tiles. Each
+            step lights the tile beneath them, creating a glowing trace that
+            records their movement. Tile functions activate on contact, layering
+            interaction over exploration. Reaching the periphery triggers the
+            first major event: the revelation of spatial bounds beyond the
+            ground plane.
+        </p>
+        <p>
+            Players begin in darkness, illuminated only by a grid of tiles. Each
+            step lights the tile beneath them, creating a glowing trace that
+            records their movement. Tile functions activate on contact, layering
+            interaction over exploration. Reaching the periphery triggers the
+            first major event: the revelation of spatial bounds beyond the
+            ground plane.
+        </p>
+        <p>
+            By the time all triggers activate, the relationship between player
+            and world has fundamentally changed. What began as a predictable
+            environment becomes a complex, shifting system that challenges
+            perception, memory, and control.
+        </p>
     </section>
-</Project>
+
+    <section class="stack">
+        <h3>Immersive Presentation</h3>
+        <p>
+            The final version of Go Quest was presented in the Craive Lab's 360°
+            projection environment, allowing the game to be experienced as a
+            spatial installation. The surrounding projections amplified the
+            game's atmospheric qualities, immersing players in a world where
+            sound, light, and movement enveloped them from all sides. This
+            setting reinforced the project's origins in immersive research and
+            demonstrated how digital environments can operate as architectural
+            experiences.
+        </p>
+    </section>
+
+    <section class="stack">
+        <h3>Conclusion</h3>
+        <p>
+            What began as an abstract study of dreams, emotions, and sensory
+            immersion evolved into a fully interactive Unity-built world. Go
+            Quest merges architectural thinking with game design, using spatial
+            logic, behavioral systems, and sensory cues to construct an
+            environment that unfolds through exploration. It stands as both a
+            game and a spatial experiment—an investigation into how immersion
+            can be designed, manipulated, and experienced.
+        </p>
+    </section>
+</Work>

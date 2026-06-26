@@ -1,0 +1,86 @@
+---
+import Base from "@layouts/Base.astro";
+import Header from "@components/Header.astro";
+import Gallery from "@components/Gallery.astro";
+
+interface Props {
+  title: string;
+  subtitle: string;
+  description: string;
+  coverImage: string;
+  coverImageAlt: string;
+  course: string;
+  courseDescription: string;
+  advisor: string;
+  collaborators: string;
+  date: string;
+  location: string;
+  gallery: any;
+}
+const {
+  title,
+  subtitle,
+  description,
+  coverImage,
+  coverImageAlt,
+  course,
+  courseDescription,
+  advisor,
+  collaborators,
+  date,
+  location,
+  gallery,
+} = Astro.props;
+
+function join(a: string, b: string) {
+  return b ? `${a}: ${b}` : a;
+}
+
+const info = [
+  { label: "Course", text: join(course, courseDescription) },
+  { label: "Advisor", text: advisor },
+  { label: "Collaborator", text: collaborators },
+  { label: "Date", text: date },
+  { label: "Location", text: location },
+].filter((i) => i.text);
+---
+
+<Base
+  title={title}
+  description={description}
+  coverImage={coverImage}
+  coverImageAlt={coverImageAlt}
+>
+  <article class="stack relaxed">
+    <Header
+      coverImage={coverImage}
+      coverImageAlt={coverImageAlt}
+      title={title}
+      subtitle={subtitle}
+    />
+
+    <aside class="grid auto-fit relaxed">
+      {
+        info.map((item) => (
+          <div class="stack tight">
+            <h3>{item.label} \</h3>
+            <p>{item.text}</p>
+          </div>
+        ))
+      }
+    </aside>
+
+    <hr />
+    <slot />
+
+    <hr />
+    <Gallery gallery={gallery} />
+  </article>
+</Base>
+
+<script type="module">
+  import { limitHeaderHeight } from "/scripts/utils.js";
+
+  limitHeaderHeight();
+  document.documentElement.classList.toggle("stableScrollbar");
+</script>

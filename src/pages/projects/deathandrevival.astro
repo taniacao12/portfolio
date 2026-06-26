@@ -1,13 +1,14 @@
 ---
-import Project from "@layouts/Project.astro";
+import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
+    order: 6,
     title: "Death and Revival",
     coverImage: "/deathandrevival/Church 2.jpg",
 };
 ---
 
-<Project
+<Work
     title={frontmatter.title}
     subtitle="A Study of Bodies, Cities, and Cycles of Change"
     description="Architectural studio project exploring the relationship between human bodies, urban environments, and the cyclical nature of change. The research examines three temporal states—present, death, and revival—juxtaposing the idealized forms of Renaissance architecture with the evolving realities of both body and city. Through this lens, the project reflects on how perfection is not a fixed condition but a cycle of decline, adaptation, and renewal."
@@ -15,12 +16,13 @@ export const frontmatter = {
     coverImageAlt={frontmatter.title}
     course="Architectural Studio VI"
     courseDescription="Radicle Roots"
-    instructor="Christianna Bennett"
+    advisor="Christianna Bennett"
     collaborators="Marinie Ben"
     date="Fall 2022"
     location="Rome, Italy"
+    gallery={import.meta.glob("/public/deathandrevival/gallery/*")}
 >
-    <section class="main">
+    <section class="stack">
         <p>
             Renaissance architecture reflects an idealized vision of the human
             body—proportioned, perfected, and measured against classical notions
@@ -51,4 +53,78 @@ export const frontmatter = {
             adaptation, and renewal.
         </p>
     </section>
-</Project>
+
+    <section class="row relaxed">
+        <div class="stack">
+            <h3>Inspiration</h3>
+            <p>
+                A modern take on the classic principles of architecture
+                demonstrated through gridlike structures
+            </p>
+            <img src="/deathandrevival/Inspiration.png" alt="Inspiration" />
+        </div>
+        <div class="stack">
+            <h3>Focus</h3>
+            <p>
+                Preservation of the classic monumental church maintained through
+                its use as a public gathering space
+            </p>
+            <img src="/deathandrevival/Focus.png" alt="Focus" />
+        </div>
+    </section>
+
+    <section class="stack">
+        <h3>Preliminary Studies</h3>
+        <img
+            src="/deathandrevival/Preliminary Studies.jpg"
+            alt="Preliminary Studies"
+        />
+    </section>
+
+    <section class="stack timeline">
+        <div class="stack tight slider">
+            <div class="row labels">
+                <h3>Present</h3>
+                <h3>Death</h3>
+                <h3>Revival</h3>
+            </div>
+            <input type="range" min="0" max="2" step="0.01" value="0" />
+        </div>
+        <div class="stack images">
+            <div class="image">
+                <img
+                    src="/deathandrevival/Plan 0.png"
+                    data-index="0"
+                    alt="Plan 0"
+                />
+                <img
+                    src="/deathandrevival/Plan 1.png"
+                    data-index="1"
+                    alt="Plan 1"
+                />
+                <img
+                    src="/deathandrevival/Plan 2.png"
+                    data-index="2"
+                    alt="Plan 2"
+                />
+            </div>
+            <div class="image">
+                <img
+                    src="/deathandrevival/Section 0.png"
+                    data-index="0"
+                    alt="Section"
+                />
+                <img
+                    src="/deathandrevival/Section 1.png"
+                    data-index="1"
+                    alt="Section"
+                />
+                <img
+                    src="/deathandrevival/Section 2.png"
+                    data-index="2"
+                    alt="Section"
+                />
+            </div>
+        </div>
+    </section>
+</Work>
