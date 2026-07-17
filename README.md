@@ -1,17 +1,16 @@
 # portfolio
 
-> A clean personal portfolio website built with Astro and Tailwind CSS.
+> A clean personal portfolio website built with Astro.
 
 This project is a personal portfolio website designed to showcase professional work, projects, and skills. Built with Astro, it leverages static site generation to deliver high performance and fast load times with minimal client-side overhead.
 
-The application uses Astro's file-based routing system with pages organized under the src/pages directory, including a primary index.astro landing page. Tailwind CSS is integrated to provide a utility-first styling system, enabling rapid design iterations directly within Astro component files.
+The application uses Astro's file-based routing system with pages organized under the src/pages directory, including a primary index.astro landing page.
 
 It is ideal for developers and creators who need a lightweight, easily customizable web presence that can be built and deployed statically to any modern hosting provider.
 
 ## ✨ Key Features
 
 - **🚀 Astro File-Based Routing** — Organizes application pages and routes automatically based on files placed in the src/pages directory.
-- **🎨 Tailwind CSS Integration** — Provides rapid, utility-first styling natively integrated into Astro components.
 - **📦 Static Asset Management** — Serves static images and media assets directly from the public directory.
 - **⚙️ Production Build Pipelines** — Includes predefined scripts to build and preview the optimized static build locally before deployment.
 
@@ -19,13 +18,12 @@ It is ideal for developers and creators who need a lightweight, easily customiza
 
 - Deploying a personal developer portfolio to showcase software projects and resumes.
 - Creating a lightweight, content-focused landing page using static site generation.
-- Bootstrapping a fast Astro-based web application with pre-configured Tailwind CSS styling.
 
 ## 🛠️ Tech Stack
 
 **Frontend:**
 
-![Astro](https://img.shields.io/badge/Astro-BC52EE?style=for-the-badge&logo=astro&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white) ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Astro](https://img.shields.io/badge/Astro-BC52EE?style=for-the-badge&logo=astro&logoColor=white) ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=white)
 
 **Tools & Build:**
 
@@ -54,9 +52,7 @@ npm run dev
 ## 📦 Key Dependencies
 
 ```
-@tailwindcss/vite: ^4.2.2
 astro: ^6.1.3
-tailwindcss: ^4.2.2
 ```
 
 ## 🚀 Available Scripts
