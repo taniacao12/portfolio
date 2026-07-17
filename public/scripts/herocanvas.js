@@ -1,41 +1,35 @@
-import { Node } from "./node.js";
-import { Connection, MAXDIST } from "./connection.js";
+import { Node } from './node.js';
+import { Connection, MAXDIST } from './connection.js';
 
 const AMBIENT_DENSITY = 15000;
-const AMBIENT_PULSE_INTERVAL = 1500;
+const AMBIENT_PULSE_INTERVAL = 1500; // ms
+const HOVER_MULTIPLIER = 3;
 
-const canvasContainer = document.querySelector(".canvasContainer");
-const canvas = document.querySelector(".canvasContainer canvas");
-const linkOverlay = document.querySelector(".canvasContainer a");
-const ctx = canvas.getContext("2d");
+const heroCanvas = document.getElementById('heroCanvas');
+const canvas = heroCanvas.querySelector('canvas');
+const linkOverlay = heroCanvas.querySelector('a');
+const ctx = canvas.getContext('2d');
 
-let paused = false;
 let nodes = [];
 let connections = [];
-let activeNode = null;
-let lastTime = performance.now();
+let paused = true;
+let lastTime = null;
 
 const cellKey = (x, y) => `${x},${y}`;
 
 // -------------------------------------
-// Canvas / Layout
+// Canvas / layout
 // -------------------------------------
 function resizeCanvas() {
-  if (canvas.width == canvasContainer.parentElement.clientWidth &&
-    canvas.height == canvasContainer.clientHeight) return;
-  // console.log(
-  //   canvas.width,
-  //   canvas.height,
-  //   parseFloat(getComputedStyle(canvasContainer.parentElement).width),
-  //   canvasContainer.clientHeight,
-  // );
-  canvas.width = parseFloat(getComputedStyle(canvasContainer.parentElement).width);
-  canvas.height = canvasContainer.clientHeight;
-  // console.log("canvas size:", canvas.width, canvas.height);
+  if (canvas.width == heroCanvas.clientWidth &&
+    canvas.height == heroCanvas.clientHeight) return;
+  canvas.width = heroCanvas.clientWidth;
+  canvas.height = heroCanvas.clientHeight;
+  // console.log('canvas size:', canvas.width, canvas.height);
 }
 
 // -------------------------------------
-// Collision Resolution
+// Collision resolution
 // -------------------------------------
 function resolveCollisions() {
   const grid = new Map();
@@ -57,7 +51,7 @@ function resolveCollisions() {
   ];
 
   for (const [key, A] of grid) {
-    const [cx, cy] = key.split(",").map(Number);
+    const [cx, cy] = key.split(',').map(Number);
 
     for (const [ox, oy] of offsets) {
       const B = grid.get(cellKey(cx + ox, cy + oy));
@@ -106,8 +100,20 @@ function resolveCollisions() {
 }
 
 // -------------------------------------
-// Update / Draw Pipeline
+// Update / draw pipeline
 // -------------------------------------
+function updateDimmedNodes() {
+  nodes.forEach(node => {
+    if (!filterMode.projects && !filterMode.publications) {
+      node.dimmed = false;
+    } else if (filterMode.projects && !filterMode.publications) {
+      node.dimmed = !node.isProject;
+    } else if (!filterMode.projects && filterMode.publications) {
+      node.dimmed = !node.isPublication;
+    } else node.dimmed = !(node.isProject || node.isPublication);
+  });
+}
+
 function updateGeometry(dt) {
   for (const g of nodes) g.update(dt);
   for (const g of connections) g.update(dt);
@@ -132,7 +138,7 @@ function drawGeometry(sorted) {
 }
 
 // -------------------------------------
-// Ambient Node Birth / Death
+// Ambient node birth / death
 // -------------------------------------
 function spawnAmbientNode() {
   const newNode = new Node();
@@ -166,90 +172,19 @@ function ambientPulse(maxAmbient) {
 }
 
 // -------------------------------------
-// Hover Logic
+// Animation loop
 // -------------------------------------
-function handleDirectoryHover(a) {
-  a.addEventListener("mouseenter", () => {
-    nodes.forEach(n => {
-      n.hovered = false;
-      n.targetRadius = n.baseRadius;
-    });
-
-    const href = new URL(a.href).pathname;
-    const node = nodes.find(n => n.href === href);
-    if (node) {
-      node.hovered = true;
-      node.targetRadius = node.baseRadius * 3;
-    }
-  });
-
-  a.addEventListener("mouseleave", () => {
-    const href = new URL(a.href).pathname;
-    const node = nodes.find(n => n.href === href);
-    if (node) {
-      node.hovered = false;
-      node.targetRadius = node.baseRadius;
-    }
-  });
+function playAnimation() {
+  if (!paused) return;
+  paused = false;
+  lastTime = performance.now();
+  requestAnimationFrame(animate);
 }
 
-function handleCanvasHover(e) {
-  const mx = e.offsetX, my = e.offsetY;
-
-  let closest = null, closestDist = Infinity;
-  for (const n of nodes) {
-    const [x, y] = n.getCoordinates();
-    const d = Math.hypot(mx - x, my - y);
-    if (d < closestDist) {
-      closestDist = d;
-      closest = n;
-    }
-  }
-
-  nodes.forEach(n => {
-    const h = n === closest && closestDist < n.radius;
-    n.hovered = h;
-    n.targetRadius = h ? n.baseRadius * 3 : n.baseRadius;
-  });
-
-  activeNode = closest && closest.href && closest.hovered ? closest : null;
-
-  if (activeNode) {
-    const [x, y] = activeNode.getCoordinates();
-    const r = activeNode.radius;
-    linkOverlay.href = activeNode.href;
-    linkOverlay.style.display = "block";
-    linkOverlay.style.left = `${x - r}px`;
-    linkOverlay.style.top = `${y - r}px`;
-    linkOverlay.style.width = linkOverlay.style.height = `${r * 2}px`;
-    linkOverlay.style.pointerEvents = "auto";
-    linkOverlay.style.cursor = "pointer";
-  } else {
-    linkOverlay.style.display = "none";
-    linkOverlay.style.pointerEvents = "none";
-  }
+function pauseAnimation() {
+  paused = true;
 }
 
-// -------------------------------------
-// Click Navigation
-// -------------------------------------
-function handleCanvasClick(e) {
-  const mx = e.offsetX, my = e.offsetY;
-
-  for (const n of nodes) {
-    if (!n.href) continue;
-
-    const [x, y] = n.getCoordinates();
-    if (Math.hypot(mx - x, my - y) < n.radius) {
-      location.href = n.href;
-      break;
-    }
-  }
-}
-
-// -------------------------------------
-// Animation Loop
-// -------------------------------------
 function animate(now) {
   if (paused) return;
 
@@ -264,10 +199,77 @@ function animate(now) {
   drawGeometry(geo);
   resolveCollisions();
 
-  nodes = nodes.filter(n => !n.isDead);
-  connections = connections.filter(c => !c.isDead);
+  nodes = nodes.filter(n => !n.dead);
+  connections = connections.filter(c => !c.dead);
 
   requestAnimationFrame(animate);
+}
+
+// -------------------------------------
+// Hover animations
+// -------------------------------------
+function handleDirectoryHover(el) {
+  const href = new URL(el.href).pathname;
+  const node = nodes.find(n => n.href === href);
+
+  el.addEventListener('mouseenter', () => {
+    nodes.forEach(n => n.updateHoverStatus(false));
+
+    if (node) node.updateHoverStatus(true, HOVER_MULTIPLIER);
+  });
+
+  el.addEventListener('mouseleave', () => {
+    if (node) node.updateHoverStatus(false);
+  });
+}
+
+function handleCanvasHover(e) {
+  nodes.forEach(n => n.updateHoverStatus(false));
+
+  const mx = e.offsetX, my = e.offsetY;
+  let closestNode = null, closestDist = Infinity;
+  for (const n of nodes) {
+    const [x, y] = n.getCoordinates();
+    const d = Math.hypot(mx - x, my - y);
+    if (d < closestDist) {
+      closestDist = d;
+      closestNode = n;
+    }
+  }
+
+  const node = nodes.find(n => n === closestNode && n.radius > closestDist);
+  if (node) node.updateHoverStatus(true, HOVER_MULTIPLIER);
+
+  if (closestNode && closestNode.hovered && !closestNode.isAmbient) {
+    const [x, y] = closestNode.getCoordinates();
+    const r = closestNode.radius;
+    linkOverlay.classList.toggle('hide');
+    linkOverlay.href = closestNode.href;
+    linkOverlay.style.left = `${x - r}px`;
+    linkOverlay.style.top = `${y - r}px`;
+    linkOverlay.style.width = linkOverlay.style.height = `${r * 2}px`;
+  } else if (!linkOverlay.classList.contains('hide')) {
+    linkOverlay.classList.toggle('hide');
+    linkOverlay.removeAttribute('href');
+    linkOverlay.removeAttribute('style');
+  }
+}
+
+// -----------------------------
+// Node click handler
+// -----------------------------
+function handleCanvasClick(e) {
+  const mx = e.offsetX, my = e.offsetY;
+
+  for (const n of nodes) {
+    if (n.isAmbient) continue;
+
+    const [x, y] = n.getCoordinates();
+    if (Math.hypot(mx - x, my - y) < n.radius) {
+      location.href = n.href;
+      break;
+    }
+  }
 }
 
 // -------------------------------------
@@ -278,34 +280,51 @@ export function InitHeroCanvas({ works = [] }) {
 
   const ambientCount = Math.round((canvas.width * canvas.height) / AMBIENT_DENSITY);
   const maxAmbient = parseInt(ambientCount * 1.5);
-  // console.log("max ambient node count:", maxAmbient);
-  // console.log("initial ambient node count:", ambientCount);
+  // console.log('max ambient node count:', maxAmbient);
+  // console.log('initial ambient node count:', ambientCount);
 
   works.forEach(work => nodes.push(new Node(work.type, work)));
   for (let i = 0; i < ambientCount; i++) nodes.push(new Node());
+  updateDimmedNodes();
 
   for (let i = 0; i < nodes.length; i++)
     for (let j = i + 1; j < nodes.length; j++)
       connections.push(new Connection(nodes[i], nodes[j]));
 
-  requestAnimationFrame(animate);
+  playAnimation();
   setInterval(ambientPulse(maxAmbient), AMBIENT_PULSE_INTERVAL);
 
-  const ro = new ResizeObserver(() => {
-    clearTimeout(window._resizeTimeout);
-    window._resizeTimeout = setTimeout(resizeCanvas, 20);
+  // -----------------------------
+  // Window visibility handler
+  // -----------------------------
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') playAnimation();
+    else pauseAnimation();
   });
-  ro.observe(canvasContainer);
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
+  // -----------------------------
+  // Window and layout resize handler
+  // -----------------------------
+  const ro = new ResizeObserver(() => {
+    paused = true;
+
+    clearTimeout(window._resizeTimeout);
+    window._resizeTimeout = setTimeout(() => {
+      resizeCanvas();
+
       paused = false;
       lastTime = performance.now();
       requestAnimationFrame(animate);
-    } else paused = true;
+    }, 10);
   });
+  ro.observe(heroCanvas);
 
-  document.querySelectorAll(".directory a").forEach(handleDirectoryHover);
-  canvas.addEventListener("mousemove", handleCanvasHover);
-  canvas.addEventListener("click", handleCanvasClick);
+  // -----------------------------
+  // Button click handlers
+  // -----------------------------
+  projectsBtn.addEventListener('click', updateDimmedNodes);
+  publicationsBtn.addEventListener('click', updateDimmedNodes);
+  directory.querySelectorAll('a').forEach(handleDirectoryHover);
+  canvas.addEventListener('mousemove', handleCanvasHover);
+  canvas.addEventListener('click', handleCanvasClick);
 }

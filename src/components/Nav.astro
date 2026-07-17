@@ -5,24 +5,21 @@ interface Props {
 const { siteName } = Astro.props;
 ---
 
-<nav class="row relaxed">
-  <a href="/" class="row brand">
+<nav class="row">
+  <a href="/" class="row">
     <img src="/icons/Favicon-Black.svg" alt={siteName} class="logo" />
-    <h1>{siteName}</h1>
+    <h1 id="brand">{siteName}</h1>
   </a>
 
   <div class="row left">
     <div id="filterGroup" class="buttonGroup row tight">
-      <button id="filterBtn">
-        <img
-          id="filterIcon"
-          class="icon"
-          src="https://img.icons8.com/ios/100/filter--v1.png"
-        />
+      <button class="label">
+        <img class="icon" src="https://img.icons8.com/ios/100/filter--v1.png" />
       </button>
-      <button id="projectsBtn">Projects</button>
-      <button id="publicationsBtn">Publications</button>
+      <button>Projects</button>
+      <button>Publications</button>
     </div>
+    <script is:inline src="/scripts/filter.js"></script>
 
     <button id="searchBtn">
       <img
@@ -31,27 +28,31 @@ const { siteName } = Astro.props;
         src="https://img.icons8.com/ios/100/search--v1.png"
       />
     </button>
+    <script is:inline src="/scripts/search.js"></script>
 
     <label id="themeToggle" class="inputIcon">
-      <input type="checkbox" id="themeButton" class="toggle" />
+      <input type="checkbox" class="toggle" />
       <span class="thumb">
         <img
-          id="themeIcon"
           class="icon"
           src="https://img.icons8.com/ios/100/sun--v3.png"
           alt="theme icon"
         />
       </span>
     </label>
+    <script is:inline src="/scripts/theme.js"></script>
   </div>
 </nav>
 
 <style>
-  #filterBtn:hover {
-    background: transparent;
+  #brand {
+    color: var(--color-text);
+    line-height: 1;
+    transition: color var(--transition-duration);
   }
 
-  #filterBtn {
-    cursor: auto;
+  .inputIcon {
+    display: inline-flex;
+    position: relative;
   }
 </style>

@@ -1,77 +1,141 @@
-const main = document.querySelector("main");
-const searchIcon = document.getElementById("searchIcon");
-const directory = document.getElementById("directory");
-const container = document.querySelector(".directory .images");
+const directory = document.querySelector('aside');
+const topBorder = directory.querySelector('.topBorder');
+const botBorder = directory.querySelector('.botBorder');
+const container = directory.querySelector('.images');
+const directoryImgs = directory.querySelectorAll('img');
 
-function createPlaceholder(width) {
-  const placeholder = document.createElement("div");
-  placeholder.className = "placeholder";
-  placeholder.style.width = width + "px";
+function setScrollWidth() {
+  if (parseFloat(directory.style.getPropertyValue('--scroll-width')) !== container.clientWidth) {
+    directory.style.setProperty('--scroll-width', container.clientWidth + 'px');
+  }
+}
+
+function createPlaceholder() {
+  const placeholder = document.createElement('div');
+  placeholder.classList.add('placeholder');
   return placeholder;
 }
 
-export function updatePlaceholders() {
-  container.querySelectorAll(".placeholder").forEach(el => el.remove());
+function addPlaceholder(reaction = true) {
+  const placeholder = createPlaceholder();
+  placeholder.classList.add('shrink');
+  container.appendChild(placeholder);
 
-  const activeImages = [...container.children].filter(
-    el => !el.classList.contains("hide")
-  );
-  const imgWidth = parseFloat(getComputedStyle(activeImages[0]).width);
-  container.prepend(createPlaceholder(imgWidth / 2));
+  void placeholder.offsetWidth;
+  placeholder.classList.remove('shrink');
 
-  const containerWidth = container.offsetWidth;
-  const leftoverWidth = directory.offsetWidth - containerWidth;
-  if (leftoverWidth <= 0) {
-    container.appendChild(createPlaceholder(imgWidth / 2));
-    return;
+  if (reaction) {
+    const show = (e) => {
+      if (e.propertyName !== 'width') return;
+      placeholder.removeEventListener('transitionend', show);
+      placeholder.classList.remove('grow');
+    };
+
+    placeholder.classList.add('grow');
+    placeholder.addEventListener('transitionend', show);
+  }
+}
+
+function removePlaceholder(placeholder) {
+  const hide = (e) => {
+    if (e.propertyName !== 'width') return;
+    placeholder.removeEventListener('transitionend', hide);
+    placeholder.remove();
   };
 
-  const gapWidth = parseFloat(getComputedStyle(container).gap) || 0;
-  let totalWidth = 0;
-  while (totalWidth < leftoverWidth) {
-    const diff = leftoverWidth - totalWidth - gapWidth;
-    if (diff < imgWidth) {
-      totalWidth += diff + gapWidth;
-      container.appendChild(createPlaceholder(diff));
-    } else {
-      totalWidth += imgWidth + gapWidth;
-      container.appendChild(createPlaceholder(imgWidth));
+  placeholder.classList.add('shrink');
+
+  placeholder.addEventListener('transitionend', hide);
+}
+
+function updatePlaceholders(reaction = true) {
+  let leftoverWidth = directory.clientWidth - container.clientWidth;
+  let placeholders = [...container.querySelectorAll('.placeholder')].slice(2);
+  while (leftoverWidth > 0) {
+    addPlaceholder(reaction);
+    placeholders = [...container.querySelectorAll('.placeholder')].slice(2);
+    leftoverWidth -= 192;
+  }
+
+  if (reaction) {
+    leftoverWidth = directory.clientWidth - container.clientWidth;
+    placeholders = [...container.querySelectorAll('.placeholder:not(.shrink)')].slice(2);
+    while (placeholders.length > 0 && leftoverWidth < -192) {
+      console.log(placeholders);
+      removePlaceholder(placeholders[placeholders.length - 1]);
+      placeholders = [...container.querySelectorAll('.placeholder:not(.shrink)')].slice(2);
+      leftoverWidth += 192;
     }
   }
 }
 
-updatePlaceholders();
-window.addEventListener("resize", updatePlaceholders);
+function hideWork(reaction, work) {
+  work.classList.add('shrink');
+  addPlaceholder();
+
+  if (reaction) {
+    const hide = (e) => {
+      if (e.propertyName !== 'width') return;
+      work.removeEventListener('transitionend', hide);
+      work.classList.add('hide');
+    };
+
+    work.addEventListener('transitionend', hide);
+  } else work.classList.add('hide');
+}
+
+function showWork(work, placeholder) {
+  work.classList.remove('hide');
+  void work.offsetWidth;
+  work.classList.remove('shrink');
+
+  removePlaceholder(placeholder);
+}
+
+function filterWorks(reaction = true) {
+  let hideCount = 0;
+  directoryImgs.forEach(img => {
+    const isProject = img.classList.contains('project');
+    const isPublication = img.classList.contains('publication');
+    const hide =
+      (filterMode.projects || filterMode.publications) &&
+      !((filterMode.projects && isProject) || (filterMode.publications && isPublication));
+
+    if (hide) hideWork(reaction, img.parentElement);
+    else if (img.parentElement.classList.contains('hide')) {
+      const placeholders = container.querySelectorAll('.placeholder');
+      showWork(img.parentElement, placeholders[placeholders.length - hideCount - 1]);
+      hideCount += 1;
+    }
+  });
+
+  if (!reaction) updatePlaceholders(reaction);
+}
+
+container.prepend(createPlaceholder());
+container.appendChild(createPlaceholder());
+
+filterWorks(false);
 
 // -----------------------------
-// Button click handler
+// Window Resize Handler
 // -----------------------------
-searchBtn.addEventListener("click", () => {
-  searchBtn.classList.toggle("active");
-  directory.classList.toggle("active");
-  main.classList.toggle("tight");
+window.addEventListener('resize', () => {
+  updatePlaceholders();
 });
 
 // -----------------------------
-// Hover animations
+// Directory Resize Handler
 // -----------------------------
-searchBtn.addEventListener("mouseenter", () => {
-  searchIcon.setAttribute("src", "/icons/Search.apng");
-});
-searchBtn.addEventListener("mouseleave", () => {
-  searchIcon.setAttribute(
-    "src",
-    "https://img.icons8.com/ios/100/search--v1.png",
-  );
-});
+const ro = new ResizeObserver(setScrollWidth);
+ro.observe(container);
 
 // -----------------------------
-// Enable up/down scroll
+// Scroll Handler
 // -----------------------------
-directory.addEventListener("wheel", (e) => {
+directory.addEventListener('wheel', (e) => {
   if (e.deltaX === 0 && e.deltaY !== 0) {
     e.preventDefault();
     directory.scrollLeft += e.deltaY;
   }
 }, { passive: false });
-

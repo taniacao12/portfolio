@@ -1,4 +1,5 @@
 ---
+import { getWorks } from "@scripts/script.ts";
 import Base from "@layouts/Base.astro";
 import Header from "@components/Header.astro";
 import Gallery from "@components/Gallery.astro";
@@ -36,6 +37,8 @@ function join(a: string, b: string) {
   return b ? `${a}: ${b}` : a;
 }
 
+const wrap = (i: number, len: number) => (i + len) % len;
+
 const info = [
   { label: "Course", text: join(course, courseDescription) },
   { label: "Advisor", text: advisor },
@@ -43,6 +46,12 @@ const info = [
   { label: "Date", text: date },
   { label: "Location", text: location },
 ].filter((i) => i.text);
+
+const works = [...getWorks()];
+const index = works.findIndex((w) => w.title === title);
+const prevWork = works[wrap(index - 1, works.length)];
+const nextWork = works[wrap(index + 1, works.length)];
+// console.log("works:", works);
 ---
 
 <Base
@@ -59,7 +68,7 @@ const info = [
       subtitle={subtitle}
     />
 
-    <aside class="grid auto-fit relaxed">
+    <div id="properties" class="grid col-3 relaxed">
       {
         info.map((item) => (
           <div class="stack tight">
@@ -68,19 +77,68 @@ const info = [
           </div>
         ))
       }
-    </aside>
+    </div>
 
     <hr />
     <slot />
 
     <hr />
     <Gallery gallery={gallery} />
+
+    <hr />
+    <div id="navButtons" class="row">
+      {
+        prevWork && (
+          <a href={prevWork.href}>
+            <div class="buttonGroup row tight">
+              <button class="label">
+                <img
+                  class="icon"
+                  src="https://img.icons8.com/ios-filled/100/chevron-left.png"
+                />
+              </button>
+              <button>{prevWork.title}</button>
+            </div>
+          </a>
+        )
+      }
+
+      <button id="scrollBtn">Back To Top</button>
+      <script type="module">
+        const scrollBtn = document.getElementById("scrollBtn");
+
+        scrollBtn.addEventListener("click", () => {
+          document.documentElement.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      </script>
+
+      {
+        nextWork && (
+          <a href={nextWork.href}>
+            <div class="buttonGroup row tight">
+              <button>{nextWork.title}</button>
+              <button class="label">
+                <img
+                  class="icon"
+                  src="https://img.icons8.com/ios-filled/100/chevron-right.png"
+                />
+              </button>
+            </div>
+          </a>
+        )
+      }
+    </div>
+
+    <hr />
   </article>
 </Base>
 
 <script type="module">
-  import { limitHeaderHeight } from "/scripts/utils.js";
-
-  limitHeaderHeight();
-  document.documentElement.classList.toggle("stableScrollbar");
+  document.documentElement.classList.toggle("stable-scrollbar");
 </script>
+
+<style>
+  #navButtons {
+    justify-content: space-between;
+  }
+</style>

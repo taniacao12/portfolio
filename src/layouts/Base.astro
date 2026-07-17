@@ -1,5 +1,6 @@
 ---
 import "@styles/global.css";
+import "@styles/misc.css";
 import Nav from "@components/Nav.astro";
 import Directory from "@components/Directory.astro";
 import Footer from "@components/Footer.astro";
@@ -17,10 +18,6 @@ const siteName = `${author}.`;
 
 <html lang="en-US">
   <head>
-    <script type="module">
-      import "/scripts/theme.js";
-    </script>
-
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -49,12 +46,15 @@ const siteName = `${author}.`;
   </head>
 
   <body class="stack tight">
+    <script is:inline src="/scripts/setup.js"></script>
+
     <Nav siteName={siteName} />
 
-    <main class="stretch stack tight">
+    <main class="stack stretch tight">
       <Directory />
 
       <slot />
+      <script is:inline src="/scripts/grid.js"></script>
     </main>
 
     <Footer siteName={siteName} />
@@ -62,11 +62,5 @@ const siteName = `${author}.`;
 </html>
 
 <script type="module">
-  import "/scripts/scrollbar.js";
-  import "/scripts/filter.js";
-  import "/scripts/timeline.js";
-  import { setMinMainWidth } from "/scripts/utils.js";
-
-  setMinMainWidth();
   document.documentElement.style.visibility = "visible";
 </script>

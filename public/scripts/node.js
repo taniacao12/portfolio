@@ -1,5 +1,15 @@
-const canvas = document.querySelector(".canvasContainer canvas");
-const ctx = canvas.getContext("2d");
+const DIM_ALPHA = 0.15;
+
+const canvas = document.querySelector('#heroCanvas canvas');
+const ctx = canvas.getContext('2d');
+
+const PathCache = new Map();
+const ColorCache = new Map();
+
+function round(value, places) {
+  const multiplier = Math.pow(10, places);
+  return Math.round(value * multiplier) / multiplier;
+}
 
 function initRadius(isAmbient, alpha) {
   const MIN = 5;
@@ -20,22 +30,12 @@ function initVelocity(isAmbient, depth) {
 
 function initColor(isAmbient, depth) {
   if (isAmbient) {
-    const MIN = 50;
-    const MAX = 200;
-    return Math.round(MIN + depth * (MAX - MIN));
+    const MIN = 1;
+    const MAX = 255;
+    return Math.round(MIN + (1 - depth) * (MAX - MIN));
   } return 0;
 }
 
-const BlurCache = new Map();
-function getBlur(depth) {
-  const BLUR_MAX = 1.5;
-  if (!BlurCache.has(depth)) {
-    const blur = Math.pow(1 - depth, 2) * BLUR_MAX;
-    BlurCache.set(depth, `blur(${blur}px)`);
-  } return BlurCache.get(depth);
-}
-
-const PathCache = new Map();
 function getPath(r) {
   if (!PathCache.has(r)) {
     const p = new Path2D();
@@ -43,25 +43,6 @@ function getPath(r) {
     p.ellipse(0, 0, r, r, 0, 0, Math.PI * 2);
     PathCache.set(r, p);
   } return PathCache.get(r);
-}
-
-const FillCache = new Map();
-function getFill(isAmbient, color, dimmed, isDark) {
-  const DIM_ALPHA = 0.15;
-  const key = `${isAmbient}|${color}|${dimmed}|${isDark}`;
-  if (FillCache.has(key)) return FillCache.get(key);
-
-  let c;
-  if (isAmbient) {
-    c = isDark
-      ? (dimmed ? 280 - color : 250 - color)
-      : color;
-  } else c = isDark ? 255 : 0;
-  const fill = dimmed
-    ? `rgba(${c},${c},${c},${DIM_ALPHA})`
-    : `rgba(${c},${c},${c},1)`;
-  FillCache.set(key, fill);
-  return fill;
 }
 
 function drawImage(img, r) {
@@ -101,23 +82,24 @@ const DEATH = {
 };
 
 export class Node {
-  constructor(type = "ambient", data) {
+  constructor(type = 'ambient', data) {
     this.order = data?.order ?? 0;
-    this.isAmbient = type === "ambient";
-    this.isProject = type === "project";
-    this.isPublication = type === "publication";
+    this.isAmbient = type === 'ambient';
+    this.isProject = type === 'project';
+    this.isPublication = type === 'publication';
+    this.dimmed = false;
     this.born = false;
-    this.isDead = false;
+    this.dead = false;
     this.dying = false;
     this.hovered = false;
     this.loaded = false;
-    this.opacity = this.born ? 1 : 0;
+    this.opacity = 0;
     this.connections = [];
 
     // depth & radius
-    this.depth = this.isAmbient ? Math.random() : 1;
+    this.depth = this.isAmbient ? Math.random() * 0.95 : 1;
     this.depthAlpha = 0.2 + this.depth * 0.8;
-    this.radius = this.born ? this.baseRadius : 0;
+    this.radius = 0;
     this.baseRadius = initRadius(this.isAmbient, this.depthAlpha);
     this.targetRadius = this.baseRadius;
 
@@ -146,8 +128,24 @@ export class Node {
     return [this.nx * canvas.width, this.ny * canvas.height];
   }
 
+  getColor(alpha = this.dimmed ? DIM_ALPHA : 1) {
+    const isDark = root.classList.contains('dark');
+    const key = `${this.isAmbient}|${this.color}|${this.dimmed}|${isDark}|${alpha}`;
+    if (ColorCache.has(key)) return ColorCache.get(key);
+
+    const c = isDark ? 255 - this.color : this.color;
+    const color = `rgba(${c},${c},${c},${alpha})`;
+    ColorCache.set(key, color);
+    return color;
+  }
+
   addConnection(connection) {
     this.connections.push(connection);
+  }
+
+  updateHoverStatus(status, multiplier = 1) {
+    this.hovered = status;
+    this.targetRadius = this.baseRadius * multiplier;
   }
 
   update(dt) {
@@ -191,8 +189,8 @@ export class Node {
       this.radius += (0 - this.radius) * Math.min(DEATH.shrink * dt, 1);
       this.opacity += (0 - this.opacity) * DEATH.fade * dt;
       if (this.radius < DEATH.cutoffR || this.opacity < DEATH.cutoffA) {
-        this.isDead = true;
-        this.connections.forEach(c => c.isDead = true);
+        this.dead = true;
+        this.connections.forEach(c => c.dead = true);
       }
     }
   }
@@ -200,31 +198,23 @@ export class Node {
   draw() {
     ctx.save();
 
-    const isDark = document.documentElement.classList.contains("dark");
-    const filterMode = JSON.parse(sessionStorage.getItem("filterMode"));
-    const dimmed =
-      filterMode.projects || filterMode.publications
-        ? filterMode.projects && !filterMode.publications
-          ? !this.isProject
-          : !filterMode.projects && filterMode.publications
-            ? !this.isPublication
-            : !(this.isProject || this.isPublication)
-        : false;
-    const [x, y] = this.getCoordinates();
-    const r = this.radius;
+    let [x, y] = this.getCoordinates();
+    let r = this.radius;
+    x = round(x, 3);
+    y = round(y, 3);
+    r = round(r, 3);
 
-    ctx.filter = this.isAmbient ? getBlur(this.depth) : "none";
     ctx.globalAlpha = this.opacity;
 
     const path = getPath(r);
     ctx.translate(x, y);
     ctx.clip(path);
 
-    ctx.fillStyle = getFill(this.isAmbient, this.color, dimmed, isDark);
+    ctx.fillStyle = this.getColor();
     ctx.fill(path);
 
     const expanded = r > this.baseRadius * this.revealThreshold;
-    if (!dimmed && this.hovered && expanded && this.img && this.loaded) {
+    if (!this.dimmed && this.hovered && expanded && this.img && this.loaded) {
       drawImage(this.img, r);
     }
 

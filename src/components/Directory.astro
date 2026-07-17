@@ -5,16 +5,25 @@ const works = getWorks();
 // console.log("works:", works);
 ---
 
-<aside id="directory" class="directory">
-  <div class="imageContainer row tight">
-    <div class="images row">
-      {
-        works.map((p) => (
-          <a href={p.href} class={p.type}>
-            <img src={p.coverImage} alt={p.title} class={p.type} />
-          </a>
-        ))
-      }
-    </div>
+<aside class="stack tight">
+  <div class="topBorder stack tight">
+    <div class="top"></div>
+    <div class="cutout"></div>
+    <div class="bottom"></div>
+  </div>
+  <div class="images row">
+    {
+      works.map((p) => (
+        <a href={p.href} class={p.type}>
+          <img src={p.coverImage} alt={p.title} class={p.type} />
+        </a>
+      ))
+    }
+  </div>
+  <div class="botBorder stack tight">
+    <div class="top"></div>
+    <div class="cutout"></div>
+    <div class="bottom"></div>
   </div>
 </aside>
+<script is:inline src="/scripts/directory.js"></script>
