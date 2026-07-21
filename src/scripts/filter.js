@@ -1,3 +1,5 @@
+import { filterWorks } from './directory.js';
+
 const filterGroup = document.getElementById('filterGroup');
 const filterIcon = filterGroup.children[0].firstElementChild;
 const projectsBtn = filterGroup.children[1];
@@ -9,6 +11,11 @@ function toggleFilterBtn(btn, key) {
     sessionStorage.setItem('filterMode', JSON.stringify(filterMode));
     // console.log('applied', key, 'filter');
 }
+
+// -----------------------------
+// Load filter state from session storage
+// -----------------------------
+let filterMode = JSON.parse(sessionStorage.getItem('filterMode'));
 
 if (filterMode.projects) {
     toggleFilterBtn(projectsBtn, 'projects');

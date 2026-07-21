@@ -1,7 +1,5 @@
 const main = document.querySelector('main');
 const grids = document.getElementsByClassName('grid');
-const article = document.querySelector('article');
-const properties = document.getElementById('properties');
 
 function setCols(grid) {
     let cols = 0;

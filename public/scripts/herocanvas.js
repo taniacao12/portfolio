@@ -5,6 +5,10 @@ const AMBIENT_DENSITY = 15000;
 const AMBIENT_PULSE_INTERVAL = 1500; // ms
 const HOVER_MULTIPLIER = 3;
 
+const filterGroup = document.getElementById('filterGroup');
+const projectsBtn = filterGroup.children[1];
+const publicationsBtn = filterGroup.children[2];
+const directory = document.querySelector('aside');
 const heroCanvas = document.getElementById('heroCanvas');
 const canvas = heroCanvas.querySelector('canvas');
 const linkOverlay = heroCanvas.querySelector('a');
@@ -103,6 +107,7 @@ function resolveCollisions() {
 // Update / draw pipeline
 // -------------------------------------
 function updateDimmedNodes() {
+  let filterMode = JSON.parse(sessionStorage.getItem('filterMode'));
   nodes.forEach(node => {
     if (!filterMode.projects && !filterMode.publications) {
       node.dimmed = false;
@@ -179,6 +184,7 @@ function playAnimation() {
   paused = false;
   lastTime = performance.now();
   requestAnimationFrame(animate);
+  paused = true;
 }
 
 function pauseAnimation() {

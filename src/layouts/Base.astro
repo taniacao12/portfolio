@@ -43,10 +43,12 @@ const siteName = `${author}.`;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={`${title} | ${siteName}`} />
     <meta name="twitter:description" content={description} />
+
+    <script src="./scripts/setup.js" is:inline></script>
   </head>
 
   <body class="stack tight">
-    <script is:inline src="/scripts/setup.js"></script>
+    <script src="../scripts/setup.js"></script>
 
     <Nav siteName={siteName} />
 
@@ -54,13 +56,9 @@ const siteName = `${author}.`;
       <Directory />
 
       <slot />
-      <script is:inline src="/scripts/grid.js"></script>
+      <script src="../scripts/grid.js"></script>
     </main>
 
     <Footer siteName={siteName} />
   </body>
 </html>
-
-<script type="module">
-  document.documentElement.style.visibility = "visible";
-</script>

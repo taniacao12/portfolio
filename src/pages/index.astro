@@ -16,12 +16,11 @@ const works = getWorks();
 		<canvas></canvas>
 		<a class="hide"></a>
 	</div>
+	<script type="module" define:vars={{ works }}>
+		import { InitHeroCanvas } from "./scripts/herocanvas.js";
+		InitHeroCanvas({ works });
+	</script>
 </Base>
-
-<script type="module" define:vars={{ works }}>
-	import { InitHeroCanvas } from "/scripts/herocanvas.js";
-	InitHeroCanvas({ works });
-</script>
 
 <style>
 	#heroCanvas {

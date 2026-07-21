@@ -68,7 +68,7 @@ const nextWork = works[wrap(index + 1, works.length)];
       subtitle={subtitle}
     />
 
-    <div id="properties" class="grid col-3 relaxed">
+    <div class="grid col-3 relaxed">
       {
         info.map((item) => (
           <div class="stack tight">
@@ -132,10 +132,6 @@ const nextWork = works[wrap(index + 1, works.length)];
     <hr />
   </article>
 </Base>
-
-<script type="module">
-  document.documentElement.classList.toggle("stable-scrollbar");
-</script>
 
 <style>
   #navButtons {

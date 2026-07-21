@@ -12,6 +12,7 @@ const works = getWorks();
     <div class="bottom"></div>
   </div>
   <div class="images row">
+    <div class="placeholder"></div>
     {
       works.map((p) => (
         <a href={p.href} class={p.type}>
@@ -19,6 +20,7 @@ const works = getWorks();
         </a>
       ))
     }
+    <div class="placeholder"></div>
   </div>
   <div class="botBorder stack tight">
     <div class="top"></div>
@@ -26,4 +28,4 @@ const works = getWorks();
     <div class="bottom"></div>
   </div>
 </aside>
-<script is:inline src="/scripts/directory.js"></script>
+<script src="../scripts/directory.js"></script>

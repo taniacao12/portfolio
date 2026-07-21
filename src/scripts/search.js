@@ -1,4 +1,6 @@
+const main = document.querySelector('main');
 const searchBtn = document.getElementById('searchBtn');
+const directory = document.querySelector('aside');
 
 // -----------------------------
 // Hover animations

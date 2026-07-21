@@ -1,12 +1,11 @@
 const directory = document.querySelector('aside');
-const topBorder = directory.querySelector('.topBorder');
-const botBorder = directory.querySelector('.botBorder');
 const container = directory.querySelector('.images');
 const directoryImgs = directory.querySelectorAll('img');
 
 function setScrollWidth() {
-  if (parseFloat(directory.style.getPropertyValue('--scroll-width')) !== container.clientWidth) {
-    directory.style.setProperty('--scroll-width', container.clientWidth + 'px');
+  const width = container.clientWidth;
+  if (parseFloat(directory.style.getPropertyValue('--scroll-width')) !== width) {
+    directory.style.setProperty('--scroll-width', width + 'px');
   }
 }
 
@@ -16,7 +15,7 @@ function createPlaceholder() {
   return placeholder;
 }
 
-function addPlaceholder(reaction = true) {
+function addPlaceholder() {
   const placeholder = createPlaceholder();
   placeholder.classList.add('shrink');
   container.appendChild(placeholder);
@@ -24,7 +23,7 @@ function addPlaceholder(reaction = true) {
   void placeholder.offsetWidth;
   placeholder.classList.remove('shrink');
 
-  if (reaction) {
+  if (directory.classList.contains('show')) {
     const show = (e) => {
       if (e.propertyName !== 'width') return;
       placeholder.removeEventListener('transitionend', show);
@@ -33,6 +32,20 @@ function addPlaceholder(reaction = true) {
 
     placeholder.classList.add('grow');
     placeholder.addEventListener('transitionend', show);
+  }
+}
+
+function addPlaceholders() {
+  const max = Math.ceil((directory.clientWidth + 12) / 192);
+  let count = [...container.children].filter(
+    el => !(el.classList.contains('hide') || el.classList.contains('shrink'))
+  ).length;
+
+  while (count < max) {
+    addPlaceholder();
+    count = [...container.children].filter(
+      el => !(el.classList.contains('hide') || el.classList.contains('shrink'))
+    ).length;
   }
 }
 
@@ -48,32 +61,26 @@ function removePlaceholder(placeholder) {
   placeholder.addEventListener('transitionend', hide);
 }
 
-function updatePlaceholders(reaction = true) {
-  let leftoverWidth = directory.clientWidth - container.clientWidth;
-  let placeholders = [...container.querySelectorAll('.placeholder')].slice(2);
-  while (leftoverWidth > 0) {
-    addPlaceholder(reaction);
-    placeholders = [...container.querySelectorAll('.placeholder')].slice(2);
-    leftoverWidth -= 192;
-  }
-
-  if (reaction) {
-    leftoverWidth = directory.clientWidth - container.clientWidth;
+function removePlaceholders() {
+  const max = Math.ceil((directory.clientWidth + 12) / 192);
+  let count = [...container.children].filter(
+    el => !(el.classList.contains('hide') || el.classList.contains('shrink'))
+  ).length;
+  let placeholders = [...container.querySelectorAll('.placeholder:not(.shrink)')].slice(2);
+  while (count > max && placeholders.length > 0) {
+    removePlaceholder(placeholders[placeholders.length - 1]);
     placeholders = [...container.querySelectorAll('.placeholder:not(.shrink)')].slice(2);
-    while (placeholders.length > 0 && leftoverWidth < -192) {
-      console.log(placeholders);
-      removePlaceholder(placeholders[placeholders.length - 1]);
-      placeholders = [...container.querySelectorAll('.placeholder:not(.shrink)')].slice(2);
-      leftoverWidth += 192;
-    }
+    count = [...container.children].filter(
+      el => !(el.classList.contains('hide') || el.classList.contains('shrink'))
+    ).length;
   }
 }
 
-function hideWork(reaction, work) {
+function hideWork(work) {
   work.classList.add('shrink');
-  addPlaceholder();
+  addPlaceholders();
 
-  if (reaction) {
+  if (directory.classList.contains('show')) {
     const hide = (e) => {
       if (e.propertyName !== 'width') return;
       work.removeEventListener('transitionend', hide);
@@ -84,16 +91,15 @@ function hideWork(reaction, work) {
   } else work.classList.add('hide');
 }
 
-function showWork(work, placeholder) {
+function showWork(work) {
   work.classList.remove('hide');
   void work.offsetWidth;
   work.classList.remove('shrink');
-
-  removePlaceholder(placeholder);
+  removePlaceholders();
 }
 
-function filterWorks(reaction = true) {
-  let hideCount = 0;
+export function filterWorks() {
+  let filterMode = JSON.parse(sessionStorage.getItem('filterMode'));
   directoryImgs.forEach(img => {
     const isProject = img.classList.contains('project');
     const isPublication = img.classList.contains('publication');
@@ -101,27 +107,23 @@ function filterWorks(reaction = true) {
       (filterMode.projects || filterMode.publications) &&
       !((filterMode.projects && isProject) || (filterMode.publications && isPublication));
 
-    if (hide) hideWork(reaction, img.parentElement);
+    if (hide) hideWork(img.parentElement);
     else if (img.parentElement.classList.contains('hide')) {
-      const placeholders = container.querySelectorAll('.placeholder');
-      showWork(img.parentElement, placeholders[placeholders.length - hideCount - 1]);
-      hideCount += 1;
+      showWork(img.parentElement);
     }
   });
-
-  if (!reaction) updatePlaceholders(reaction);
 }
 
-container.prepend(createPlaceholder());
-container.appendChild(createPlaceholder());
-
-filterWorks(false);
+setScrollWidth();
+filterWorks();
 
 // -----------------------------
 // Window Resize Handler
 // -----------------------------
 window.addEventListener('resize', () => {
-  updatePlaceholders();
+  setScrollWidth();
+  addPlaceholders();
+  removePlaceholders();
 });
 
 // -----------------------------
