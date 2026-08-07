@@ -26,22 +26,22 @@ const imgs = format(gallery);
     }
   </div>
 
-  <div id="galleryModal">
-    <div id="backsplash"></div>
-    <div id="content" class="row">
-      <button id="modalPrev" class="modalPrev">
+  <div class="modal hide">
+    <div class="backsplash"></div>
+    <div class="content row">
+      <button>
         <img
           class="icon"
           src="https://img.icons8.com/ios-filled/100/chevron-left.png"
         />
       </button>
 
-      <div class="stack">
+      <figure class="stack">
         <img />
         <h3 class="center"></h3>
-      </div>
+      </figure>
 
-      <button id="modalNext" class="modalNext">
+      <button>
         <img
           class="icon"
           src="https://img.icons8.com/ios-filled/100/chevron-right.png"
@@ -49,7 +49,7 @@ const imgs = format(gallery);
       </button>
     </div>
   </div>
-  <script type="module" src="../scripts/modal.js" defer></script>
+  <script src="../scripts/modal.js"></script>
 </section>
 
 <style>
@@ -60,65 +60,5 @@ const imgs = format(gallery);
   .galleryImg:hover {
     opacity: 0.7;
     cursor: zoom-in;
-  }
-
-  #galleryModal {
-    visibility: hidden;
-    position: fixed;
-    inset: 0;
-    width: 100dvw;
-    height: 100dvh;
-  }
-
-  #galleryModal.active {
-    visibility: visible;
-  }
-
-  #galleryModal > * {
-    position: absolute;
-    margin: auto;
-    width: 100%;
-    height: 100%;
-  }
-
-  #galleryModal #backsplash {
-    background-color: var(--color-bg-invert);
-    opacity: 0.9;
-  }
-
-  #galleryModal #content {
-    inset: 0;
-    width: 90%;
-    height: 80%;
-    justify-content: center;
-  }
-
-  #galleryModal > * > div {
-    height: 100%;
-  }
-
-  #galleryModal #content button {
-    border-color: var(--color-button-border-invert);
-    border-width: var(--border-width-thick);
-    width: 44px;
-    height: 44px;
-  }
-
-  #galleryModal #content button:hover {
-    background: var(--color-button-bg-hover-invert);
-  }
-
-  #galleryModal #content button img {
-    filter: invert(var(--invert-on));
-  }
-
-  #galleryModal #content div img {
-    width: 100%;
-    height: 100%;
-    object-fit: scale-down;
-  }
-
-  #galleryModal h3 {
-    color: var(--color-text-invert);
   }
 </style>

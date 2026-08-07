@@ -30,7 +30,7 @@ const { siteName } = Astro.props;
     </button>
     <script src="../scripts/search.js"></script>
 
-    <label id="themeToggle" class="inputIcon">
+    <label id="themeToggle">
       <input type="checkbox" class="toggle" />
       <span class="thumb">
         <img
@@ -46,12 +46,12 @@ const { siteName } = Astro.props;
 
 <style>
   #brand {
-    color: var(--color-text);
     line-height: 1;
+    color: var(--color-text);
     transition: color var(--transition-duration);
   }
 
-  .inputIcon {
+  #themeToggle {
     display: inline-flex;
     position: relative;
   }

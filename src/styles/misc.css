@@ -11,6 +11,115 @@
     height: 100%;
 }
 
+#cycle {
+    --top: 10%;
+    --left: 30%;
+    --arrow-width: 48px;
+    --arrow-thickness: 2px;
+
+    display: flex;
+    position: relative;
+}
+
+#cycle h4,
+#cycle h5 {
+    padding: var(--spacing-extra-extra-thin) var(--spacing-extra-thin);
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+#cycle h4 {
+    top: 50%;
+    left: 50%;
+}
+
+#cycle h5:nth-of-type(1) {
+    top: var(--top);
+    left: var(--left);
+}
+
+#cycle h5:nth-of-type(2) {
+    top: var(--top);
+    left: calc(100% - var(--left));
+}
+
+#cycle h5:nth-of-type(3) {
+    top: 50%;
+    left: calc(100% - var(--left) / 2);
+}
+
+#cycle h5:nth-of-type(4) {
+    top: calc(100% - var(--top));
+    left: calc(100% - var(--left));
+}
+
+#cycle h5:nth-of-type(5) {
+    top: calc(100% - var(--top));
+    left: var(--left);
+}
+
+#cycle h5:nth-of-type(6) {
+    top: 50%;
+    left: calc(var(--left) / 2);
+}
+
+#cycle .arrow {
+    position: absolute;
+    width: var(--arrow-width);
+    height: var(--arrow-thickness);
+    background-color: var(--color-text);
+}
+
+#cycle .arrow:nth-of-type(1) {
+    top: var(--top);
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#cycle .arrow:nth-of-type(2) {
+    top: calc((var(--top) + 50%) / 2);
+    left: calc(100% - var(--left) * 3 / 4 - var(--arrow-width) / 2);
+    rotate: 45deg;
+}
+
+#cycle .arrow:nth-of-type(3) {
+    top: calc((50% + 100% - var(--top)) / 2);
+    left: calc(100% - var(--left) * 3 / 4 - var(--arrow-width) / 2);
+    rotate: 135deg;
+}
+
+#cycle .arrow:nth-of-type(4) {
+    top: calc(100% - var(--top));
+    left: 50%;
+    transform: translate(50%, -50%);
+    rotate: 180deg;
+}
+
+#cycle .arrow:nth-of-type(5) {
+    top: calc((50% + 100% - var(--top)) / 2);
+    left: calc(var(--left) * 3 / 4 - var(--arrow-width) / 2);
+    rotate: 225deg;
+}
+
+#cycle .arrow:nth-of-type(6) {
+    top: calc((var(--top) + 50%) / 2);
+    left: calc(var(--left) * 3 / 4 - var(--arrow-width) / 2);
+    rotate: 315deg;
+}
+
+#cycle .arrow::after {
+    --head-width: calc(var(--arrow-width) / 8);
+
+    content: "";
+    border-right: var(--arrow-thickness) solid var(--color-text);
+    border-bottom: var(--arrow-thickness) solid var(--color-text);
+    position: absolute;
+    width: var(--head-width);
+    height: var(--head-width);
+    translate: calc(var(--arrow-width) / 2 - var(--head-width) * sqrt(2)) calc(var(--arrow-width) / -16);
+    rotate: -45deg;
+}
+
 /* 
 --breakpoint-sm: 40rem;
 --breakpoint-md: 48rem;
