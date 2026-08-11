@@ -2,8 +2,6 @@ import { Node } from './node.js';
 import { Connection, MAXDIST } from './connection.js';
 
 const AMBIENT_DENSITY = 15000;
-const AMBIENT_PULSE_INTERVAL = 1500; // ms
-const HOVER_MULTIPLIER = 3;
 
 const filterGroup = document.getElementById('filterGroup');
 const projectsBtn = filterGroup.children[1];
@@ -46,7 +44,7 @@ function resolveCollisions() {
     const key = cellKey(cx, cy);
 
     if (!grid.has(key)) grid.set(key, []);
-    grid.get(key).push({ node: n, p: { x, y, r: n.radius } });
+    grid.get(key).push({ node: n, p: { x, y, r: n.pr } });
   }
 
   const offsets = [
@@ -125,10 +123,10 @@ function updateGeometry(dt) {
 }
 
 function sortGeometry() {
-  const geo = [...connections, ...nodes];
+  const geo = [...nodes, ...connections];
   geo.sort((a, b) => {
-    if (a.depth !== b.depth) return a.depth - b.depth;
-    if (a.depth !== 1) {
+    if (a.nz !== b.nz) return a.nz - b.nz;
+    if (a.nz !== 1) {
       const aIsNode = a instanceof Node;
       const bIsNode = b instanceof Node;
       if (aIsNode !== bIsNode) return aIsNode ? -1 : 1;
@@ -143,48 +141,12 @@ function drawGeometry(sorted) {
 }
 
 // -------------------------------------
-// Ambient node birth / death
-// -------------------------------------
-function spawnAmbientNode() {
-  const newNode = new Node();
-  for (let i = 0; i < nodes.length - 1; i++) {
-    connections.push(new Connection(nodes[i], newNode));
-  } nodes.push(newNode);
-}
-
-function killRandomAmbientNode() {
-  const ambientNodes = nodes.filter(n => n.isAmbient && !n.dying);
-  if (ambientNodes.length === 0) return;
-
-  const victim = ambientNodes[Math.floor(Math.random() * ambientNodes.length)];
-  victim.dying = true;
-}
-
-function ambientPulse(maxAmbient) {
-  const BIRTH_RATIO = 0.4;
-  const KILL_RATIO = 0.4;
-
-  const ambientNodes = nodes.filter(n => n.isAmbient && !n.dying);
-  const ratio = ambientNodes.length / maxAmbient;
-  const birthChance = Math.max(0, (1 - ratio) * BIRTH_RATIO);
-  const killChance = Math.max(0, ratio * KILL_RATIO);
-  const nothingChance = 1 - birthChance - killChance;
-
-  const roll = Math.random();
-  if (roll < nothingChance) return;
-  if (roll < nothingChance + birthChance) return spawnAmbientNode();
-  killRandomAmbientNode();
-}
-
-// -------------------------------------
 // Animation loop
 // -------------------------------------
-function playAnimation() {
-  if (!paused) return;
+function resumeAnimation() {
   paused = false;
   lastTime = performance.now();
   requestAnimationFrame(animate);
-  paused = true;
 }
 
 function pauseAnimation() {
@@ -221,7 +183,7 @@ function handleDirectoryHover(el) {
   el.addEventListener('mouseenter', () => {
     nodes.forEach(n => n.updateHoverStatus(false));
 
-    if (node) node.updateHoverStatus(true, HOVER_MULTIPLIER);
+    if (node) node.updateHoverStatus(true);
   });
 
   el.addEventListener('mouseleave', () => {
@@ -243,12 +205,12 @@ function handleCanvasHover(e) {
     }
   }
 
-  const node = nodes.find(n => n === closestNode && n.radius > closestDist);
-  if (node) node.updateHoverStatus(true, HOVER_MULTIPLIER);
+  const node = nodes.find(n => n === closestNode && n.pr > closestDist);
+  if (node) node.updateHoverStatus(true);
 
   if (closestNode && closestNode.hovered && !closestNode.isAmbient) {
     const [x, y] = closestNode.getCoordinates();
-    const r = closestNode.radius;
+    const r = closestNode.pr;
     linkOverlay.classList.toggle('hide');
     linkOverlay.href = closestNode.href;
     linkOverlay.style.left = `${x - r}px`;
@@ -271,7 +233,7 @@ function handleCanvasClick(e) {
     if (n.isAmbient) continue;
 
     const [x, y] = n.getCoordinates();
-    if (Math.hypot(mx - x, my - y) < n.radius) {
+    if (Math.hypot(mx - x, my - y) < n.pr) {
       location.href = n.href;
       break;
     }
@@ -285,26 +247,23 @@ export function InitHeroCanvas({ works = [] }) {
   resizeCanvas();
 
   const ambientCount = Math.round((canvas.width * canvas.height) / AMBIENT_DENSITY);
-  const maxAmbient = parseInt(ambientCount * 1.5);
-  // console.log('max ambient node count:', maxAmbient);
   // console.log('initial ambient node count:', ambientCount);
 
-  works.forEach(work => nodes.push(new Node(work.type, work)));
-  for (let i = 0; i < ambientCount; i++) nodes.push(new Node());
+  works.forEach(work => nodes.push(new Node(works.length, work.type, work)));
+  for (let i = 0; i < ambientCount; i++) nodes.push(new Node(works.length));
   updateDimmedNodes();
 
   for (let i = 0; i < nodes.length; i++)
     for (let j = i + 1; j < nodes.length; j++)
       connections.push(new Connection(nodes[i], nodes[j]));
 
-  playAnimation();
-  setInterval(ambientPulse(maxAmbient), AMBIENT_PULSE_INTERVAL);
+  resumeAnimation();
 
   // -----------------------------
   // Window visibility handler
   // -----------------------------
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') playAnimation();
+    if (document.visibilityState === 'visible') resumeAnimation();
     else pauseAnimation();
   });
 
@@ -312,7 +271,7 @@ export function InitHeroCanvas({ works = [] }) {
   // Window and layout resize handler
   // -----------------------------
   const ro = new ResizeObserver(() => {
-    paused = true;
+    pauseAnimation();
 
     clearTimeout(window._resizeTimeout);
     window._resizeTimeout = setTimeout(() => {
