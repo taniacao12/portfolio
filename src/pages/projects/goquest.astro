@@ -2,8 +2,8 @@
 import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
-    order: 4,
     title: "Go Quest",
+    date: "2023.12.08",
     coverImage: "/goquest/Go Quest.jpg",
 };
 ---
@@ -18,7 +18,7 @@ export const frontmatter = {
     courseDescription="Inception"
     advisor="Carla Leitao"
     collaborators="Odette Gonzalez & Sarah Lowrey"
-    date="Fall 2023"
+    date={frontmatter.date}
     location="Troy, New York"
     gallery={import.meta.glob("/public/goquest/gallery/*")}
 >

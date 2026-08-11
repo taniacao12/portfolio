@@ -2,8 +2,8 @@
 import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
-    order: 5,
     title: "Rainbow School",
+    date: "2020.05.29",
     coverImage: "/rainbowschool/Rainbow School.png",
 };
 ---
@@ -18,7 +18,7 @@ export const frontmatter = {
     courseDescription="Learning by Playing or A Kindergartener's Approach to Architecture"
     advisor="Daniel Horowitz"
     collaborators=""
-    date="Spring 2020"
+    date={frontmatter.date}
     location=""
     gallery={import.meta.glob("/public/rainbowschool/gallery/*")}
 >

@@ -2,8 +2,8 @@
 import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
-    order: 2,
     title: "Chelsea Timber Library",
+    date: "2022.04.27",
     coverImage: "/chelseatimberlibrary/Exterior Ground.jpg",
 };
 ---
@@ -19,7 +19,7 @@ export const frontmatter = {
     courseDescription="Reimagine The Branch Library"
     advisor="Florencia Vetcher & Ted Krueger"
     collaborators=""
-    date="Fall 2021 & Spring 2022"
+    date={frontmatter.date}
     location="Chelsea, New York"
     gallery={import.meta.glob("/public/chelseatimberlibrary/gallery/*")}
 >

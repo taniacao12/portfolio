@@ -2,8 +2,8 @@
 import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
-    order: 1,
     title: "CodeCheck",
+    date: "2025.08.15",
     coverImage: "/codecheck/CodeCheck.jpeg",
 };
 ---
@@ -18,7 +18,7 @@ export const frontmatter = {
     courseDescription=""
     advisor="Dennis Shelden"
     collaborators=""
-    date="Aug 2025"
+    date={frontmatter.date}
     location="New York, New York"
     gallery={import.meta.glob("/public/codecheck/gallery/*")}
 >

@@ -2,8 +2,8 @@
 import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
-    order: 3,
     title: "Lens Into The Future",
+    date: "2022.08.19",
     coverImage: "/lensintothefuture/Spring.png",
 };
 ---
@@ -18,7 +18,7 @@ export const frontmatter = {
     courseDescription="Innovation Center"
     advisor="Matthew Lopez"
     collaborators="Sarah Lowrey"
-    date="Summer 2022"
+    date={frontmatter.date}
     location="Troy, New York"
     gallery={import.meta.glob("/public/lensintothefuture/gallery/*")}
 >

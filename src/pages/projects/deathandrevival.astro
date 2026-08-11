@@ -2,8 +2,8 @@
 import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
-    order: 6,
     title: "Death and Revival",
+    date: "2022.12.09",
     coverImage: "/deathandrevival/Church 2.jpg",
 };
 ---
@@ -18,7 +18,7 @@ export const frontmatter = {
     courseDescription="Radicle Roots"
     advisor="Christianna Bennett"
     collaborators="Marinie Ben"
-    date="Fall 2022"
+    date={frontmatter.date}
     location="Rome, Italy"
     gallery={import.meta.glob("/public/deathandrevival/gallery/*")}
 >

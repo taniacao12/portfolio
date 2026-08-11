@@ -2,8 +2,8 @@
 import Work from "@layouts/Work.astro";
 
 export const frontmatter = {
-    order: 7,
     title: "Garden Central",
+    date: "2021.05.03",
     coverImage: "/gardencentral/Eye Level Night.jpg",
 };
 ---
@@ -18,7 +18,7 @@ export const frontmatter = {
     courseDescription="Mixed-Use Housing"
     advisor="Adam Dayem"
     collaborators="Yi Liu"
-    date="Spring 2021"
+    date={frontmatter.date}
     location="Troy, New York"
     gallery={import.meta.glob("/public/gardencentral/gallery/*")}
 >
