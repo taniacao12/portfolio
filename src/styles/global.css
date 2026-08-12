@@ -27,26 +27,31 @@
     --font-display: video;
 
     /* Color: text, background-color */
-    --color-text: black;
-    --color-text-muted: gray;
-    --color-text-invert: white;
-    --color-bg: white;
-    --color-bg-muted: lightgray;
-    --color-bg-invert: black;
-    --color-button-text: black;
-    --color-button-text-invert: white;
-    --color-button-bg: transparent;
-    --color-button-bg-hover: lightgray;
-    --color-button-bg-hover-invert: gray;
-    --color-button-bg-active: black;
-    --color-button-border: black;
-    --color-button-border-invert: white;
-    --color-input-text: black;
-    --color-input-bg: transparent;
-    --color-input-border: black;
-    --color-input-accent: black;
-    --color-input-check: black;
-    --color-table-border: lightgray;
+    --color-hue: 0;
+    --color-saturation: 0%;
+    --color-lightness-light: 98%;
+    --color-lightness-primary: 80%;
+    --color-lightness-secondary: calc(100% - var(--color-lightness-primary));
+    --color-lightness-dark: calc(100% - var(--color-lightness-light));
+
+    --color-light: hsl(var(--color-hue), var(--color-saturation), var(--color-lightness-light));
+    --color-primary: hsl(var(--color-hue), var(--color-saturation), var(--color-lightness-primary));
+    --color-secondary: hsl(var(--color-hue), var(--color-saturation), var(--color-lightness-secondary));
+    --color-dark: hsl(var(--color-hue), var(--color-saturation), var(--color-lightness-dark));
+
+    --color-border: var(--color-dark);
+    --color-border-invert: var(--color-light);
+
+    --color-text: var(--color-dark);
+    --color-text-invert: var(--color-light);
+    --color-text-link: var(--color-primary);
+    --color-text-visited: var(--color-secondary);
+
+    --color-bg: var(--color-light);
+    --color-bg-hover: var(--color-primary);
+    --color-bg-active: var(--color-secondary);
+    --color-bg-invert: var(--color-dark);
+    --color-bg-transparent: transparent;
 
     /* Effects: box-shadow, opacity, transition */
     --invert-on: 1;
@@ -55,23 +60,11 @@
 }
 
 .dark {
-    --color-text: white;
-    --color-text-muted: gray;
-    --color-text-invert: black;
-    --color-bg: black;
-    --color-bg-muted: gray;
-    --color-bg-invert: white;
-    --color-button-text: white;
-    --color-button-text-invert: black;
-    --color-button-bg-hover: gray;
-    --color-button-bg-hover-invert: lightgray;
-    --color-button-bg-active: white;
-    --color-button-border: white;
-    --color-button-border-invert: black;
-    --color-input-text: white;
-    --color-input-border: white;
-    --color-input-accent: white;
-    --color-input-check: white;
+    /* Color: text, background-color */
+    --color-lightness-light: 2%;
+    --color-lightness-primary: 20%;
+
+    /* Effects: box-shadow, opacity, transition */
     --invert-on: 0;
     --invert-off: 1;
 }
@@ -82,7 +75,7 @@
 }
 
 html {
-    scrollbar-color: var(--color-bg-invert) var(--color-bg);
+    scrollbar-color: var(--color-bg-invert) var(--color-bg-transparent);
     transition: scrollbar-color var(--transition-duration);
 }
 
@@ -92,11 +85,11 @@ html::-webkit-scrollbar-thumb {
 }
 
 html::-webkit-scrollbar-thumb:hover {
-    background-color: var(--color-bg-muted);
+    background-color: var(--color-bg-hover);
 }
 
 html::-webkit-scrollbar-track {
-    background-color: var(--color-bg);
+    background-color: var(--color-bg-transparent);
     transition: background-color var(--transition-duration);
 }
 
@@ -311,8 +304,8 @@ aside .cutout {
     background-image: repeating-linear-gradient(to right,
             var(--color-bg) 0,
             var(--color-bg) 12px,
-            transparent 12px,
-            transparent 28px);
+            var(--color-bg-transparent) 12px,
+            var(--color-bg-transparent) 28px);
 }
 
 aside.show .bottom {
@@ -338,7 +331,7 @@ aside.show .images>* {
 
 aside .placeholder {
     background-color: var(--color-bg);
-    opacity: 0.2;
+    opacity: 0.1;
 }
 
 aside a.hide {
@@ -400,13 +393,13 @@ div.modal .content {
 
 div.modal button {
     border-width: var(--border-width-thick);
-    border-color: var(--color-button-border-invert);
+    border-color: var(--color-border-invert);
     width: 44px;
     height: 44px;
 }
 
 div.modal button:hover {
-    background: var(--color-button-bg-hover-invert);
+    background: var(--color-bg-hover);
 }
 
 div.modal button img {
@@ -480,19 +473,19 @@ th {
 
 /* --- Hyperlink Elements --- */
 a:link {
-    color: var(--color-text-muted);
+    color: var(--color-text-link);
     text-decoration: none;
     cursor: pointer;
 }
 
 a:visited {
-    color: var(--color-text-muted);
+    color: var(--color-text-visited);
 }
 
 /* --- Buttons --- */
 button {
     padding: var(--spacing-extra-extra-thin) var(--spacing-extra-thin);
-    border: var(--border-width) var(--border-style) var(--color-button-border);
+    border: var(--border-width) var(--border-style) var(--color-border);
     border-radius: var(--border-radius);
     flex-shrink: 0;
     height: 36px;
@@ -501,8 +494,8 @@ button {
     font-weight: 600;
     font-style: normal;
     text-transform: uppercase;
-    color: var(--color-button-text);
-    background-color: var(--color-button-bg);
+    color: var(--color-text);
+    background-color: var(--color-bg-transparent);
     cursor: pointer;
     transition:
         color var(--transition-duration),
@@ -511,12 +504,12 @@ button {
 }
 
 button:hover {
-    background-color: var(--color-button-bg-hover);
+    background-color: var(--color-bg-hover);
 }
 
 button.active {
-    color: var(--color-button-text-invert);
-    background-color: var(--color-button-bg-active);
+    color: var(--color-text-invert);
+    background-color: var(--color-bg-active);
 }
 
 button.active img {
@@ -537,7 +530,7 @@ div.buttonGroup button.label {
 }
 
 div.buttonGroup button.label:hover {
-    background-color: transparent;
+    background-color: var(--color-bg-transparent);
 }
 
 div.buttonGroup button:first-child {
@@ -551,8 +544,8 @@ div.buttonGroup button:last-child {
 
 /* --- Inputs --- */
 input {
-    color: var(--color-input-text);
-    background-color: var(--color-input-bg);
+    color: var(--color-text);
+    background-color: var(--color-bg-transparent);
     transition:
         color var(--transition-duration),
         background-color var(--transition-duration);
@@ -562,7 +555,7 @@ input[type=checkbox] {
     appearance: none;
     position: relative;
     padding: var(--spacing-extra-extra-thin);
-    border: var(--border-width) var(--border-style) var(--color-input-border);
+    border: var(--border-width) var(--border-style) var(--color-border);
     border-radius: var(--border-radius);
     width: 66px;
     height: 36px;
@@ -577,7 +570,7 @@ input[type=checkbox]:before {
     inset: 2px 2px 0 2px;
     width: 28px;
     height: 28px;
-    background-color: var(--color-input-check);
+    background-color: var(--color-bg-invert);
     transition:
         background-color var(--transition-duration),
         transform var(--transition-duration);
@@ -603,7 +596,7 @@ input[type=checkbox]:checked+.thumb img {
 }
 
 input[type=range] {
-    accent-color: var(--color-input-accent);
+    accent-color: var(--color-bg-invert);
     transition: accent-color var(--transition-duration);
 }
 
@@ -642,7 +635,7 @@ img {
 /* --- Tables --- */
 table {
     border-collapse: collapse;
-    border: var(--border-width) var(--border-style) var(--color-table-border);
+    border: var(--border-width) var(--border-style) var(--color-border);
     transition: border-color var(--transition-duration);
 }
 
@@ -654,7 +647,7 @@ table.rounded-corners {
 
 thead,
 tbody {
-    border-bottom: var(--border-width) var(--border-style) var(--color-table-border);
+    border-bottom: var(--border-width) var(--border-style) var(--color-border);
 }
 
 tr>* {
@@ -662,35 +655,35 @@ tr>* {
 }
 
 tr>*:not(:first-child):not(.borderless) {
-    border-left: var(--border-width-thin) var(--border-style) var(--color-table-border);
+    border-left: var(--border-width-thin) var(--border-style) var(--color-border);
 }
 
 tr:not(:first-child),
 table.rounded-corners tr:not(:first-child)>* {
-    border-top: var(--border-width-thin) var(--border-style) var(--color-table-border);
+    border-top: var(--border-width-thin) var(--border-style) var(--color-border);
 }
 
 table.rounded-corners thead tr>*:not(.borderless),
 table.rounded-corners tbody tr:first-child>*:not(.borderless),
 table.rounded-corners tfoot tr>*:not(.borderless) {
-    border-top: var(--border-width) var(--border-style) var(--color-table-border);
+    border-top: var(--border-width) var(--border-style) var(--color-border);
 }
 
 table.rounded-corners tfoot tr>*:not(.borderless),
 table.rounded-corners .rounded-bottom-left,
 table.rounded-corners .rounded-bottom-left+*:not(.borderless) {
-    border-bottom: var(--border-width) var(--border-style) var(--color-table-border);
+    border-bottom: var(--border-width) var(--border-style) var(--color-border);
 }
 
 table.rounded-corners tr th:first-child+*,
 table.rounded-corners tr>*:not(.borderless):first-child,
 table.rounded-corners .rounded-top-left,
 table.rounded-corners .rounded-bottom-left {
-    border-left: var(--border-width) var(--border-style) var(--color-table-border);
+    border-left: var(--border-width) var(--border-style) var(--color-border);
 }
 
 table.rounded-corners tr>*:last-child {
-    border-right: var(--border-width) var(--border-style) var(--color-table-border);
+    border-right: var(--border-width) var(--border-style) var(--color-border);
 }
 
 /* --- Canvases --- */

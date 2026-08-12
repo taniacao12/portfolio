@@ -11,7 +11,7 @@
     height: 100%;
 }
 
-#cycle {
+/* #cycle {
     --top: 10%;
     --left: 30%;
     --arrow-width: 48px;
@@ -118,7 +118,7 @@
     height: var(--head-width);
     translate: calc(var(--arrow-width) / 2 - var(--head-width) * sqrt(2)) calc(var(--arrow-width) / -16);
     rotate: -45deg;
-}
+} */
 
 /* 
 --breakpoint-sm: 40rem;
