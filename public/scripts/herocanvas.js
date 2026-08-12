@@ -39,12 +39,13 @@ function resolveCollisions() {
   // bucket nodes into grid cells
   for (const n of nodes) {
     const [x, y] = n.getCoordinates();
-    const cx = Math.floor(x / MAXDIST);
-    const cy = Math.floor(y / MAXDIST);
+    const r = n.getRadius();
+    const cx = Math.floor(n.nx / MAXDIST);
+    const cy = Math.floor(n.ny / MAXDIST);
     const key = cellKey(cx, cy);
 
     if (!grid.has(key)) grid.set(key, []);
-    grid.get(key).push({ node: n, p: { x, y, r: n.pr } });
+    grid.get(key).push({ node: n, p: { x, y, r } });
   }
 
   const offsets = [
@@ -66,15 +67,14 @@ function resolveCollisions() {
         for (let j = start; j < B.length; j++) {
           const b = B[j];
           const na = a.node, nb = b.node;
-
-          if (na.isAmbient || nb.isAmbient) continue;
+          if (na.nz != nb.nz) continue;
 
           const dx = b.p.x - a.p.x;
           const dy = b.p.y - a.p.y;
           const dist = Math.hypot(dx, dy);
           const minD = a.p.r + b.p.r;
 
-          if (dist < minD && dist > 0) {
+          if (dist > 0 && dist < minD) {
             const nx = dx / dist, ny = dy / dist;
             const push = (minD - dist) / 2;
 
@@ -110,10 +110,10 @@ function updateDimmedNodes() {
     if (!filterMode.projects && !filterMode.publications) {
       node.dimmed = false;
     } else if (filterMode.projects && !filterMode.publications) {
-      node.dimmed = !node.isProject;
+      node.dimmed = !(node.type === "project");
     } else if (!filterMode.projects && filterMode.publications) {
-      node.dimmed = !node.isPublication;
-    } else node.dimmed = !(node.isProject || node.isPublication);
+      node.dimmed = !(node.type === "publication");
+    } else node.dimmed = !(node.type === "project" || node.type === "publication");
   });
 }
 
@@ -126,12 +126,10 @@ function sortGeometry() {
   const geo = [...nodes, ...connections];
   geo.sort((a, b) => {
     if (a.nz !== b.nz) return a.nz - b.nz;
-    if (a.nz !== 1) {
-      const aIsNode = a instanceof Node;
-      const bIsNode = b instanceof Node;
-      if (aIsNode !== bIsNode) return aIsNode ? -1 : 1;
-      return 0;
-    } return b.order - a.order;
+    if (a instanceof Node && b instanceof Connection ||
+      a instanceof Connection && b instanceof Node) {
+      return a.nz === 1 ? a instanceof Node ? 1 : -1 : a instanceof Node ? -1 : 1;
+    } return a.order - b.order;
   });
   return geo;
 }
@@ -167,9 +165,6 @@ function animate(now) {
   drawGeometry(geo);
   resolveCollisions();
 
-  nodes = nodes.filter(n => !n.dead);
-  connections = connections.filter(c => !c.dead);
-
   requestAnimationFrame(animate);
 }
 
@@ -197,20 +192,20 @@ function handleCanvasHover(e) {
   const mx = e.offsetX, my = e.offsetY;
   let closestNode = null, closestDist = Infinity;
   for (const n of nodes) {
+    if (!n.visible) continue;
+
     const [x, y] = n.getCoordinates();
     const d = Math.hypot(mx - x, my - y);
-    if (d < closestDist) {
+    if (d < closestDist && d <= n.getRadius()) {
       closestDist = d;
       closestNode = n;
     }
   }
 
-  const node = nodes.find(n => n === closestNode && n.pr > closestDist);
-  if (node) node.updateHoverStatus(true);
-
-  if (closestNode && closestNode.hovered && !closestNode.isAmbient) {
+  if (closestNode) closestNode.updateHoverStatus(true);
+  if (closestNode && closestNode.type != "ambient") {
     const [x, y] = closestNode.getCoordinates();
-    const r = closestNode.pr;
+    const r = closestNode.getRadius();
     linkOverlay.classList.toggle('hide');
     linkOverlay.href = closestNode.href;
     linkOverlay.style.left = `${x - r}px`;
@@ -230,10 +225,11 @@ function handleCanvasClick(e) {
   const mx = e.offsetX, my = e.offsetY;
 
   for (const n of nodes) {
-    if (n.isAmbient) continue;
+    if (!n.visible || n.type === "ambient") continue;
 
     const [x, y] = n.getCoordinates();
-    if (Math.hypot(mx - x, my - y) < n.pr) {
+    const d = Math.hypot(mx - x, my - y);
+    if (d < n.getRadius()) {
       location.href = n.href;
       break;
     }
@@ -249,13 +245,13 @@ export function InitHeroCanvas({ works = [] }) {
   const ambientCount = Math.round((canvas.width * canvas.height) / AMBIENT_DENSITY);
   // console.log('initial ambient node count:', ambientCount);
 
-  works.forEach(work => nodes.push(new Node(works.length, work.type, work)));
-  for (let i = 0; i < ambientCount; i++) nodes.push(new Node(works.length));
-  updateDimmedNodes();
+  let filterMode = JSON.parse(sessionStorage.getItem('filterMode'));
+  works.forEach(work => nodes.push(new Node(filterMode, nodes.length + 1, work)));
+  for (let i = 0; i < ambientCount; i++) nodes.push(new Node(filterMode));
 
   for (let i = 0; i < nodes.length; i++)
     for (let j = i + 1; j < nodes.length; j++)
-      connections.push(new Connection(nodes[i], nodes[j]));
+      connections.push(new Connection(connections.length + 1, nodes[i], nodes[j]));
 
   resumeAnimation();
 
@@ -276,10 +272,7 @@ export function InitHeroCanvas({ works = [] }) {
     clearTimeout(window._resizeTimeout);
     window._resizeTimeout = setTimeout(() => {
       resizeCanvas();
-
-      paused = false;
-      lastTime = performance.now();
-      requestAnimationFrame(animate);
+      resumeAnimation();
     }, 10);
   });
   ro.observe(heroCanvas);

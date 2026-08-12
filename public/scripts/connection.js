@@ -1,22 +1,21 @@
-export const MAXDIST = 200;
+export const MAXDIST = 0.3;
 
 const canvas = document.querySelector('#heroCanvas canvas');
 const ctx = canvas.getContext('2d');
 
 function getDistance(nodeA, nodeB) {
-  const [ax, ay] = nodeA.getCoordinates();
-  const [bx, by] = nodeB.getCoordinates();
-  return Math.hypot(ax - bx, ay - by);
+  return Math.hypot(nodeA.nx - nodeB.nx, nodeA.ny - nodeB.ny, nodeA.nz - nodeB.nz);
 }
 
 export class Connection {
-  constructor(nodeA, nodeB) {
+  constructor(order, nodeA, nodeB) {
+    this.order = order;
     this.nodeA = nodeA;
     this.nodeB = nodeB;
 
     this.nz = Math.min(nodeA.nz, nodeB.nz);
     this.dist = getDistance(nodeA, nodeB);
-    this.visible = this.dist < MAXDIST && this.nodeA.nz > 0 && this.nodeB.nz > 0;
+    this.visible = this.nodeA.nz > 0 && this.nodeB.nz > 0 && this.dist < MAXDIST;
 
     nodeA.addConnection(this);
     nodeB.addConnection(this);
